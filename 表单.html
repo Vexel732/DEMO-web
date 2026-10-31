@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=, initial-scale=1.0" />
+    <title>表单练习</title>
+  </head>
+  <body>
+    <form action="#">
+      <!--//todo: action中填后端URL-->
+      <label for="username">用户名</label>
+      <!--文本专门用于和input绑定-->
+      <input type="text" id="username" placeholder="请输入用户名" />
+      <br />
+      <!--换行-->
+      <label for="password">密码 </label>
+      <input type="password" id="password" placeholder="请输入密码" />
+      <br />
+
+      <label for="">性别</label>
+      <input type="radio" name="gender" />男
+      <input type="radio" name="gender" />女
+      <hr />
+      <!--分割线-->
+
+      <label for="">爱好</label>
+      <input type="checkbox" name="hobby" />篮球
+      <input type="checkbox" name="hobby" />足球
+      <input type="checkbox" name="hobby" />排球
+      <input type="checkbox" name="hobby" />垒球
+      <hr />
+
+      <input type="submit" />
+      <!--//todo 提交按钮配合后端url使用 -->
+    </form>
+  </body>
+</html>

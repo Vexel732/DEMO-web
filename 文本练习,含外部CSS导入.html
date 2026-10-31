@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>文本标签练习</title>
+    <link rel="stylesheet" href="CSS/style.css" />
+    <!--todo 导入外部CSS-->
+    <style>
+      .incolor {
+        /*//! 暗底上由 blueviolet 提亮为浅紫，保证可读*/
+        color: #c084fc;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="card">
+      <h1>1级标题标签</h1>
+      <h2>2级标题标签</h2>
+      <h3>3级标题标签</h3>
+      <h4>4级标题标签</h4>
+      <h5>5级标题标签</h5>
+      <p>段落标签</p>
+      <p>文本样式<b>加粗</b><i>斜体</i><u>下划线</u><s>删除线</s></p>
+      <ul>
+        <li>无序1</li>
+        <li>无序2</li>
+        <li>无序3</li>
+        <li>无序4</li>
+      </ul>
+      <ol>
+        <li>有序1</li>
+        <li>有序2</li>
+        <li>有序3</li>
+        <li>有序4</li>
+      </ol>
+      <table border="2">
+        <tr>
+          <th>列标题1</th>
+          <th>列标题2</th>
+          <th>列标题3</th>
+          <th>列标题4</th>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>2</td>
+          <td>3</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td>22</td>
+        </tr>
+      </table>
+
+      <!--一下内容为CSS-->
+      <p>CSS内部定义</p>
+      <!--所有P文本都会变为外部CSS定义的样式-->
+
+      <h1 class="outcolor">这是一个外部CSS类型为outcolor的1级标签</h1>
+      <h2 class="outcolor">这是一个外部CSS类型为outcolor的2级标签</h2>
+      <!--外部CSS类型为outcolor-->
+
+      <h1 class="incolor">这是一个内部CSS类型为incolor的1级标签</h1>
+      <h2 class="incolor">这是一个内部CSS类型为incolor的2级标签</h2>
+      <!--内部CSS类型为incolor-->
+
+      <h2 id="outID">这是一个外部CSS，id为outID的2级标签</h2>
+      <h1 id="outID">这是一个外部CSS，id为outID的1级标签</h1>
+      <!--外部CSS,id为outID-->
+
+      <table border="3" class="outtable">
+        <tr>
+          <td>类型</td>
+          <td>浓度</td>
+          <td>温度</td>
+        </tr>
+        <tr>
+          <td>第一次</td>
+          <th>20</th>
+          <th>10</th>
+        </tr>
+      </table>
+      <!--这是一个外部CSS，类型为outtable的表格-->
+
+      <table border="3" id="outtable">
+        <tr>
+          <td>类型</td>
+          <td>浓度</td>
+          <td>温度</td>
+        </tr>
+        <tr>
+          <td>第一次</td>
+          <th>20</th>
+          <th>10</th>
+        </tr>
+      </table>
+      <!--这是一个外部CSS，id为outtable的表格-->
+
+      <img src="111.jpg" alt="" width="100" />
+      <img
+        src="https://img0.baidu.com/it/u=30302816,1581930082&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=667"
+        alt=""
+        width="200"
+      />
+      <p id="outelement">这是一个伪类选择器控制文本</p>
+
+      <!--新增：暗色主题表格演示-->
+      <h2 class="outcolor">暗色主题表格演示</h2>
+      <table class="darktable">
+        <caption>标签练习进度表</caption>
+        <thead>
+          <tr>
+            <th>序号</th>
+            <th>标签</th>
+            <th>作用</th>
+            <th>掌握程度</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>&lt;h1&gt; ~ &lt;h6&gt;</td>
+            <td>标题层级</td>
+            <td>熟练</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>&lt;p&gt; / &lt;b&gt; / &lt;i&gt;</td>
+            <td>段落与文本样式</td>
+            <td>熟练</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>&lt;ul&gt; / &lt;ol&gt;</td>
+            <td>无序与有序列表</td>
+            <td>基本掌握</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>&lt;table&gt;</td>
+            <td>表格与暗色主题</td>
+            <td>练习中</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3">合计</td>
+            <td>4 项</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </body>
+</html>

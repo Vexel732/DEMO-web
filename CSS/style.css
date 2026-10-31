@@ -1,0 +1,274 @@
+p {
+  color: #8ec5ff;
+}
+.outcolor {
+  /*//! 类型为outcolor的内容受其控制*/
+  color: #2ad6b1;
+}
+#outID {
+  /*//! id为outID的内容受其控制*/
+  color: #ff7f9c;
+  font-size: 35px;
+}
+h3 {
+  color: #ff9db0;
+}
+ol {
+  color: #c9a6ff;
+}
+.outtable {
+  font-size: 35px;
+}
+#outtable {
+  color: #8fb0ff;
+  font-size: 50px;
+}
+#outelement:hover {
+  /* 伪类选择器，鼠标移上后添加颜色 */
+  background-color: rgba(42, 214, 177, 0.35);
+  color: #eafff9;
+  font-size: 30px;
+}
+
+/* ===== 暗色主题背景 + 基础排版 ===== */
+body {
+  /* 上层：深色遮罩把底图压暗；下层：背景图片（相对于 CSS 文件所在目录） */
+  background-image:
+    linear-gradient(rgba(10, 13, 20, 0.88), rgba(10, 13, 20, 0.95)),
+    url("../111.jpg");
+  background-repeat: no-repeat; /* 不平铺 */
+  background-size: cover; /* 等比缩放铺满整个窗口 */
+  background-position: center center; /* 居中显示 */
+  background-attachment: fixed; /* 滚动时背景固定 */
+  background-color: #0a0d14; /* 图片加载失败时的深色兜底 */
+  color: #e6e6e6; /* 全局默认文字色，保证暗底上可读 */
+  min-height: 100vh;
+  margin: 0; /* 去掉浏览器默认 8px 外边距，让背景贴边 */
+  padding: 24px 16px 64px; /* 卡片四周留白 */
+  /* 文字排版 */
+  font-family: "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB",
+    "Source Han Sans SC", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.8;
+  letter-spacing: 0.4px;
+  text-align: left;
+}
+
+/* ===== 玻璃卡片容器 ===== */
+.card {
+  max-width: 980px; /* 控制阅读宽度，避免长行 */
+  margin: 0 auto;
+  padding: 40px 44px 48px;
+  background-color: rgba(22, 26, 36, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 18px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(10px) saturate(130%);
+  -webkit-backdrop-filter: blur(10px) saturate(130%); /* Safari 兼容 */
+  animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) both; /* 卡片先入场 */
+}
+
+/* ===== 文字排版：标题层级 ===== */
+h1,
+h2,
+h3,
+h4,
+h5 {
+  margin: 26px 0 12px;
+  line-height: 1.35;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+h1:first-child {
+  margin-top: 0; /* 卡片内第一个标题不留多余上边距 */
+}
+h1 {
+  font-size: 32px;
+}
+h2 {
+  font-size: 26px;
+}
+h3 {
+  font-size: 21px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+
+/* 段落与列表 */
+p {
+  margin: 10px 0;
+}
+ul,
+ol {
+  margin: 12px 0;
+  padding-left: 1.8em;
+}
+li {
+  margin: 4px 0;
+}
+ul {
+  list-style: square; /* 暗底上方块比圆点更清楚 */
+}
+
+/* 通用表格（原有 3 张表）在暗底上的边框与内边距 */
+table {
+  margin: 16px 0 28px;
+  border-color: rgba(255, 255, 255, 0.24);
+}
+th,
+td {
+  padding: 6px 12px;
+}
+
+/* 图片排版 */
+img {
+  margin: 6px 10px 6px 0;
+  vertical-align: middle;
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+}
+
+/* ===== 新增：暗色主题表格 ===== */
+.darktable {
+  width: 100%;
+  border-collapse: separate; /* 配合圆角裁切 */
+  border-spacing: 0;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
+  font-size: 15px;
+}
+.darktable caption {
+  caption-side: top;
+  text-align: left;
+  padding: 0 0 10px;
+  color: #9fb3c8;
+  font-size: 14px;
+  letter-spacing: 1.5px;
+}
+.darktable th,
+.darktable td {
+  padding: 13px 16px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.darktable thead th {
+  background-color: rgba(42, 214, 177, 0.16);
+  color: #6ff2d0;
+}
+.darktable tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+.darktable tbody tr:hover {
+  background-color: rgba(42, 214, 177, 0.12);
+  transition: background-color 0.25s ease;
+}
+.darktable tfoot td {
+  border-bottom: none;
+  color: #9fb3c8;
+}
+
+/* ===== 入场动画：依次淡入上浮 ===== */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 卡片内每个直接子元素都执行同一段动画 */
+.card > * {
+  animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* 逐个子元素递增 0.05s 延迟，形成“瀑布式”入场（共 24 个直接子元素） */
+.card > *:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.card > *:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.card > *:nth-child(3) {
+  animation-delay: 0.2s;
+}
+.card > *:nth-child(4) {
+  animation-delay: 0.25s;
+}
+.card > *:nth-child(5) {
+  animation-delay: 0.3s;
+}
+.card > *:nth-child(6) {
+  animation-delay: 0.35s;
+}
+.card > *:nth-child(7) {
+  animation-delay: 0.4s;
+}
+.card > *:nth-child(8) {
+  animation-delay: 0.45s;
+}
+.card > *:nth-child(9) {
+  animation-delay: 0.5s;
+}
+.card > *:nth-child(10) {
+  animation-delay: 0.55s;
+}
+.card > *:nth-child(11) {
+  animation-delay: 0.6s;
+}
+.card > *:nth-child(12) {
+  animation-delay: 0.65s;
+}
+.card > *:nth-child(13) {
+  animation-delay: 0.7s;
+}
+.card > *:nth-child(14) {
+  animation-delay: 0.75s;
+}
+.card > *:nth-child(15) {
+  animation-delay: 0.8s;
+}
+.card > *:nth-child(16) {
+  animation-delay: 0.85s;
+}
+.card > *:nth-child(17) {
+  animation-delay: 0.9s;
+}
+.card > *:nth-child(18) {
+  animation-delay: 0.95s;
+}
+.card > *:nth-child(19) {
+  animation-delay: 1s;
+}
+.card > *:nth-child(20) {
+  animation-delay: 1.05s;
+}
+.card > *:nth-child(21) {
+  animation-delay: 1.1s;
+}
+.card > *:nth-child(22) {
+  animation-delay: 1.15s;
+}
+.card > *:nth-child(23) {
+  animation-delay: 1.2s;
+}
+.card > *:nth-child(24) {
+  animation-delay: 1.25s;
+}
+
+/* 无障碍：系统开启“减少动态效果”时关闭全部动画 */
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .card > * {
+    animation: none;
+  }
+}
