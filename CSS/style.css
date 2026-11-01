@@ -46,8 +46,9 @@ body {
   margin: 0; /* 去掉浏览器默认 8px 外边距，让背景贴边 */
   padding: 24px 16px 64px; /* 卡片四周留白 */
   /* 文字排版 */
-  font-family: "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB",
-    "Source Han Sans SC", Arial, sans-serif;
+  font-family:
+    "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC",
+    Arial, sans-serif;
   font-size: 16px;
   line-height: 1.8;
   letter-spacing: 0.4px;

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .box1 {
+        /* width: 100px; */
+        height: 300px;
+        background-color: aqua;
+      }
+      .normal {
+        height: 100px;
+        width: 100px;
+        background-color: antiquewhite;
+      }
+      /* normal正常盒子样式 */
+      .relative {
+        width: 100px;
+        height: 100px;
+        background-color: palevioletred;
+        position: relative; /*相对定位，relative相对*/
+        left: 100px; /*距离左边100px-相对于原本位置*/
+      }
+      /*以上为相对定位样式--以下为绝对定位样式*/
+      /*以最近的已定为元素为基础，脱离正常文档形式*/
+      .box2 {
+        height: 300px;
+        background-color: blue;
+      }
+      .absolute {
+        width: 100px;
+        height: 100px;
+        background-color: black;
+        position: absolute; /*绝对定位脱离正常文档流*/
+        left: 120px; /*绝对定位后下方盒子上浮，加一个与左边距离看效果*/
+      }
+      /*以上为绝对定位样式--以下为固定定位样式*/
+      /*以浏览器相对位置定位，脱离正常文档形式*/
+      .box3 {
+        width: 100px;
+        height: 100px;
+        background-color: brown;
+        position: fixed;
+        right: 0;
+        top: 300px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>相对定位</h1>
+    <div class="box1">
+      <div class="normal"></div>
+      <div class="relative"></div>
+      <div class="normal"></div>
+    </div>
+    <!--normal正常   relative相对-->
+    <h1>绝对定位</h1>
+    <div class="box2">
+      <div class="normal"></div>
+      <div class="absolute"></div>
+      <div class="normal"></div>
+    </div>
+    <h1>固定定位</h1>
+    <div class="box3">固定定位</div>
+  </body>
+</html>
