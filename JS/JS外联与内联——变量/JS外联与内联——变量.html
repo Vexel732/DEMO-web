@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="./外联1.js"></script>
+    <!-- 调用外联JS1 -->
+    <script>
+      console.log("hello,word! 来自head"); //控制台打印字符
+    </script>
+    <script src="./外联2.js"></script>
+    <!-- 调用外联JS2 -->
+  </head>
+  <body>
+    <h1>JS测试</h1>
+    <script>
+      console.log("hello,word! 来自body"); //控制台打印字符
+      //以下为变量，一般变量只使用 let
+      var X; //变量 具有函数作用域
+      let Y = 5; //变量 具有快级作用域 5为整型
+      const b = 3.14; //常量 3.14为浮点型
+      console.log(X, Y, b);
+      //X输出显示undefined,表示变量已被声明但没有被赋值或者对象属性不存在
+      let text = "hello,word 来自变量text"; //变量 字符串
+      console.log(text);
+      let empty_value = null; //null表示变量被明确赋值为空或者不存在
+      console.log(empty_value); //输出null表示变量被明确赋值为空或者不存在
+    </script>
+  </body>
+</html>
