@@ -1,44 +1,54 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
-<body>
+  </head>
+  <body>
     <script>
+      // ===== 本文件通用说明：重复的知识点只在这里写一次，下文用“顶部 ⓐ~ⓓ”引用 =====
+      // ⓐ 函数声明：function 函数名(形参) { 函数体 } —— 只是“定义”，不会立刻执行
+      // ⓑ 函数调用：函数名() / 函数名(实参) —— 带括号才是“执行”；只写函数名拿到的是函数本身
+      // ⓒ console.log(值)：把值输出到浏览器控制台（F12 → Console），不弹窗、也不改变变量
+      // ⓓ let 变量 = 值：块级作用域；写在函数里的变量，函数外部访问不到
+      // 下面 ①~④ 是同一种函数语法的四种“用法变化”，只讲差异，重复部分引用顶部编号
 
-        function hello_with_no(){
-            console.log("hello  word!输出 ");
-            
-        }
-        hello_with_no();//调用 hello_with_no函数
-        
-        //添加返回值
-        function hello_with_return(){
-            return "hello,word!返回";
-        }
-        let a =  hello_with_return();//使用变量接收函数
-        console.log(a);//打印a这个变量
-        console.log(hello_with_return());//打印函数
-        
-        //传参
-        function hello_with_name(name){//参数为name
-            console.log("hello"+ name);//打印hello + 参数的值
-        }
-        hello_with_name("Vexel_732");//括号内的为参数
-        hello_with_name("xiao_k");
+      // ① 用法一：无参数、无返回值
+      //    与 ② 的区别：结果只在函数内部打印，外部拿不到；没有 return，所以返回值是 undefined
+      function hello_with_no() {
+        console.log("hello world!输出"); // 函数“自己打印”，不是返回值（见顶部 ⓒ）
+      }
+      hello_with_no(); // 定义 ≠ 执行：跑到这一行，① 的函数体才真正运行一次（见顶部 ⓑ）
 
-        //作用域
-        let global ="全局变量";//函数外的为全局变量
-        function local_function() {
-            let local ="局部变量";//函数内的为局部变量
-            console.log("函数内打印全局变量"+global);
-            console.log("函数内打印局部变量"+local);
-        }
-        local_function();//调用函数
-        console.log("函数外打印全局变量"+global);//打印全局变量
-        //console.log("函数外打印局部变量"+local);  //运行这一行会有报错
+      // ② 用法二：有返回值（return）
+      //    return 做两件事：结束函数 + 把值交回“调用处”；函数内部不再打印
+      function hello_with_return() {
+        return "hello,word!返回"; // 把字符串交回调用处
+      }
+      let a = hello_with_return(); // 写法 A：先接住返回值存入变量 a（见顶部 ⓓ）
+      console.log(a); // 再打印这个变量（见顶部 ⓒ）
+      console.log(hello_with_return()); // 写法 B：直接打印“调用表达式”的结果，等价于 A 的两行合并
+
+      // ③ 用法三：带参数（形参 / 实参）
+      //    形参 name 是定义时的占位名；实参是调用时真正传进来的值（可传多个，用逗号隔开）
+      function hello_with_name(name) {
+        // 形参：(形参列表)
+        console.log("hello" + name); // 字符串拼接：字符串 + 字符串 会直接连起来（④ 段最后一句同理）
+      }
+      hello_with_name("Vexel_732"); // 第 1 次传参：实参 → 形参 name
+      hello_with_name("xiao_k"); // 第 2 次传参：同一函数可反复调用，实参不同 → 输出不同（调用方式见顶部 ⓑ）
+
+      // ④ 用法四：作用域（变量在哪声明，决定它在哪能被访问）
+      let global = "全局变量"; // 写在函数外 → 全局变量：本 <script> 内任何地方都能读
+      function local_function() {
+        let local = "局部变量"; // 写在函数内 → 局部变量：只有本函数内部能用（见顶部 ⓓ）
+        console.log("函数内打印全局变量" + global); // 由内向外查找：函数内可以读函数外的全局变量
+        console.log("函数内打印局部变量" + local); // 直接使用本函数内声明过的局部变量
+      }
+      local_function(); // 调用（见顶部 ⓑ）：此时才会执行上面两行打印
+      console.log("函数外打印全局变量" + global); // 函数外也能访问全局变量（字符串拼接同 ③）
+      //console.log("函数外打印局部变量"+local);  // 取消注释会报 ReferenceError：local 只存在于 ④ 函数内部
     </script>
-</body>
+  </body>
 </html>
