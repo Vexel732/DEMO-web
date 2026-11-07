@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS 事件演示</title>
+    <style>
+        .demo{
+            width: 100px;
+            height: 100px;
+            background-color: aquamarine;
+        }
+    </style>
+</head>
+<body>
+    <!-- 内联写法：属性值只是“函数体”，必须带 () 才会真正调用，否则函数被取出后丢弃，点击无反应且不报错 -->
+    <button onclick="click_event()">这是一个点击事件按钮</button>
+    <!-- onclick代表点击事件，后面调用的是click_event函数 -->
+
+    <input type="text" onfocus="focus_event()" onblur="blur_event()">
+    <!-- 输入框获取焦点时调用focus_event函数，失去焦点时调用blur_event函数 -->
+    
+    <h1 onclick="focus_h1()" >焦点演示</h1>
+
+    <div class="demo" onclick="click_event()">这是一个盒子</div>
+
+    <script>
+        // 点击事件
+        function click_event(){
+            alert("点击事件触发");//浏览器弹窗 
+        }
+        function focus_h1() {
+            alert("文本h1被点击");
+        }
+        //聚焦事件
+        function focus_event() {
+            console.log("获取焦点");//控制台输出
+        }
+        //失焦事件
+        function blur_event(){
+            console.log("失去焦点");
+        }
+    </script>
+</body>
+</html>

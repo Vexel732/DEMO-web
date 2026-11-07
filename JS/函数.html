@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+
+        function hello_with_no(){
+            console.log("hello  word!输出 ");
+            
+        }
+        hello_with_no();//调用 hello_with_no函数
+        
+        //添加返回值
+        function hello_with_return(){
+            return "hello,word!返回";
+        }
+        let a =  hello_with_return();//使用变量接收函数
+        console.log(a);//打印a这个变量
+        console.log(hello_with_return());//打印函数
+        
+        //传参
+        function hello_with_name(name){//参数为name
+            console.log("hello"+ name);//打印hello + 参数的值
+        }
+        hello_with_name("Vexel_732");//括号内的为参数
+        hello_with_name("xiao_k");
+
+        //作用域
+        let global ="全局变量";//函数外的为全局变量
+        function local_function() {
+            let local ="局部变量";//函数内的为局部变量
+            console.log("函数内打印全局变量"+global);
+            console.log("函数内打印局部变量"+local);
+        }
+        local_function();//调用函数
+        console.log("函数外打印全局变量"+global);//打印全局变量
+        //console.log("函数外打印局部变量"+local);  //运行这一行会有报错
+    </script>
+</body>
+</html>
