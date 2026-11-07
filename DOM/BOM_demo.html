@@ -5,40 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <style>
+      /* .box2 = 类选择器：匹配所有 class="box2" 的元素，可被多个元素共用（对应脚本 ②） */
       .box2 {
-        background-color: aquamarine;
-        height: 100px;
+        background-color: aquamarine; /* 背景色：碧绿色（aquamarine） */
+        height: 100px; /* 高度 100 像素，px 是 CSS 的长度单位 */
         width: 100px;
       }
+      /* #box1 = ID 选择器：只匹配 id="box1" 的那一个元素，全页面唯一（对应脚本 ①） */
       #box1 {
-        background-color: blue;
+        background-color: blue; /* 背景色：蓝色 */
         width: 100px;
         height: 100px;
       }
     </style>
   </head>
   <body>
+    <!-- id：页面内唯一标识，JS 用 getElementById 精确定位（见脚本 ①），同一个 id 不能重复 -->
     <div id="box1">这是一个ID选择器标签</div>
+    <!-- class：类名，可被多个元素共用，JS 用 getElementsByClassName 批量取（见脚本 ②） -->
     <div class="box2">这是一个类选择器标签</div>
+    <!-- 既没有 id 也没有 class，只能按“标签名 + 下标”获取（见脚本 ③） -->
     <div>普通div标签</div>
-    <button>这是一个按钮</button>
-
+    <!-- onclick：HTML 内联方式绑定 click 事件，点击时执行引号里的 JS（对应脚本 ⑦ 的函数）
+         注意必须写 click_button() 带括号才是“调用”函数；写成 click_button 只是引用函数本身，不会执行 -->
+    <button id="button1" onclick="click_button()">这是一个按钮</button>
+    <!-- 以下属于JS -->
     <script>
+      // 为什么脚本标签写在 body 末尾：HTML 从上往下解析，此时上面的元素已存在，取节点才拿得到；
+      // 若放进 head 里，元素还没解析，getElementById 等会拿到 null（需配 DOMContentLoaded 或 defer）
+      // console.log(内容)：把内容打印到浏览器“控制台”（F12 → Console），只用于调试，不影响页面显示
+
+      // ① getElementById("id字符串")：按 id 取节点，返回“单个元素”，找不到返回 null
       var element_id = document.getElementById("box1"); //获取节点存入变量
       console.log(element_id); //输出节点
 
+      // ② getElementsByClassName("类名字符串")：按 class 取节点，返回 HTMLCollection（类数组集合，不是真数组）
+      //    这个集合的特点只在这里讲一次，下面 ③ 拿到的是同类型集合，不再重复：
+      //    · 必须用下标 [0] 才能取出元素本身（[0] = 第一个匹配项）；不写下标，拿到的是“集合”而不是元素
+      //    · 它是“活的”集合：页面上匹配元素增减后，集合内容会自动跟着变化
+      //    · 没有 forEach / map，遍历请用 for 循环，或先 Array.from(集合) 转成真数组
+      //    · 一个都没匹配到时，[0] 是 undefined（此时再写 [0].innerText 才会报错）
       var element_class = document.getElementsByClassName("box2")[0];
       console.log(element_class);
       //获取class
 
+      // ③ getElementsByTagName("标签名")：按标签名取节点，返回的也是 HTMLCollection（特点见上面 ②）
+      //    这里 [2] = 第 3 个 div：下标从 0 开始，且只数元素节点，源码里的换行、空格不算
       var element_tag = document.getElementsByTagName("div")[2];
       console.log(element_tag);
 
+      // ④ 取按钮节点：写法和 ① 完全一样（按 id 取单个元素），不再重复说明
+      var button1 = document.getElementById("button1");
+      //    变量名 button1 必须与 ⑤ ⑥ 两处使用处一致（之前误写成 element_button1 才报 ReferenceError）
+      console.log(button1);
+
+      // ⑤ 修改节点内容：innerHTML 与 innerText 的区别只在这里讲一次，⑥ 不再重复
+      //    innerHTML：把字符串当 HTML 解析后写入，所以能放标签，例如 a = "<a href='#'>链接</a>"
+      //    innerText：只当纯文本写入，写的标签会原样显示成文字；它受 CSS 影响，会触发重新排版
+      //    近亲 textContent 也只写文本，但不触发排版、性能更好（三者都只改“内容”，不改节点本身）
       let a = "测试";
       element_id.innerHTML = a; //把可以解析HTML语义，比如可以写入超链接
       element_class.innerText = "修改类选择器文本";
+      button1.innerHTML = "测试11"; // ⑥ 用法同 ⑤：把按钮里的文字替换成“测试11”
 
+      // ⑦ function 函数名() { }：定义函数（此处只是“定义”，点击时才会执行）
+      //    函数声明会被提升，写在顶层时会自动成为全局函数，
+      //    所以 HTML 里按钮的 onclick="click_button()" 能找到它并在点击时调用
+      function click_button() {
+        alert("你好"); // alert(要显示的文本)：BOM 提供，弹出带“确定”按钮的提示框
+      }
       //通过DOM绑定事件
+      // 注意：真正完成“事件绑定”的是 HTML 按钮上的 onclick 内联写法，不是这行注释
+      // 同一效果的 JS 写法（仅作了解，本文件未启用，二选一即可）：
+      //   button1.onclick = click_button;                  // DOM 属性绑定：传函数名，不加括号
+      //   button1.addEventListener("click", click_button); // 事件监听：更推荐，可绑定多个处理函数
     </script>
   </body>
 </html>
