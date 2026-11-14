@@ -3,12 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>第一个自己的网站</title>
-    <script src="web_JS.js"></script>
-    <link rel="stylesheet" href="web_CSS.css" />
+    <title>My own web!</title>
+    <!-- 以下为CSS -->
+    <style>
+      .box1 {
+        background-color: aqua;
+        height: 100px;
+        width: 200px;
+      }
+    </style>
   </head>
   <body>
-    <input type="text" />
+    <!-- 以下为JS -->
+    <script>
+      let input_1 = 10;
+      function click_box1() {
+        alert("盒子被点击");
+        for (let i = 0; i < input_1; i++) {
+          console.log(i);
+        }
+      }
+      function blur_inpot1() {
+        alert("输入框获得焦点");
+      }
+    </script>
+    <input type="text" onblur="blur_inpot1()" />
     <div class="box1" onclick="click_box1()">现在是什么时候了？</div>
   </body>
 </html>
