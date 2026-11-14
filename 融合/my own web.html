@@ -12,22 +12,81 @@
         width: 200px;
       }
     </style>
-  </head>
-  <body>
     <!-- 以下为JS -->
     <script>
-      let input_1 = 10;
+      // ===================== 可调参数 =====================
+      // 循环最多打印到多少：防止手滑输入 1000000000 时 console.log 被执行上亿次、控制台刷爆而卡死浏览器。
+      // 想放宽限制，把这个数字改大即可（但不建议改成无穷大）。
+      const MAX_PRINT = 10000;
+
+      // ===================== 主函数 =====================
+      // 触发时机：点击 <div class="box1"> 时，由 HTML 里的 onclick="click_box1()" 调用。
+      // 注意：<script> 写在 <head> 里，脚本“执行”时 <body> 还没被解析出来，
+      //      所以不能在这个函数外面直接 getElementById（那时页面里还没有输入框，只能得到 null）。
+      //      把“取元素”写在函数内部就没问题：点击发生的那一刻，DOM 早已完整。
       function click_box1() {
-        alert("盒子被点击");
-        for (let i = 0; i < input_1; i++) {
+        // ---------- 第 1 步：拿到输入框这个元素对象 ----------
+        // getElementById("numInput") 靠 HTML 里的 id="numInput" 精确定位元素。
+        // 若 HTML 里没有这个 id、或拼写不一致，这里会返回 null，
+        // 下一行再读 inputEl.valueAsNumber 就会报 "Cannot read properties of null"。
+        const inputEl = document.getElementById("numInput");
+
+        // ---------- 第 2 步：读出用户输入的数字 ----------
+        // 重要：input 元素的 .value 永远是「字符串」（输入 10 拿到的是 "10" 而不是 10），
+        //      直接拿去和数字比较会触发隐式类型转换，容易埋坑。
+        // .valueAsNumber 是浏览器已经帮我们转好的「数字类型」：
+        //   - 输入框为空       -> NaN
+        //   - 输入了非法内容   -> NaN（type="number" 通常也不允许输入字母）
+        //   - 输入 10          -> 10
+        const num = inputEl.valueAsNumber;
+
+        // ---------- 第 3 步：三道校验，任何一道不通过就 return ----------
+        // return 的作用：立刻结束整个函数，后面的循环一行都不会执行。
+        // 判断 NaN 必须用 Number.isNaN(num)，不能写成 num === NaN：
+        // 因为 NaN 与任何值（包括它自己）都不相等，num === NaN 永远为 false。
+        if (Number.isNaN(num)) {
+          alert("请先在输入框里输入一个有效的数字！");
+          return; // 空输入 / 非法输入：到此为止
+        }
+
+        // 负数时，i = 0 已经不满足条件 i <= num，循环体一次都不会执行，
+        // 用户会觉得“点了没反应”，所以这里提前给出明确提示。
+        if (num < 0) {
+          alert("请输入 0 或 0 以上的数字！");
+          return; // 负数：到此为止
+        }
+
+        // 超过上限时直接拒绝，避免 console.log 被调用上亿次导致页面卡死。
+        if (num > MAX_PRINT) {
+          alert("数字太大，请输入 " + MAX_PRINT + " 以内的数字！");
+          return; // 超限：到此为止
+        }
+
+        // ---------- 第 4 步：循环打印 ----------
+        // for 的三个部分：
+        //   ① let i = 0  初始化，整段循环只执行 1 次，i 是循环计数器；
+        //      用 let 而不是 var：let 是块级作用域，i 不会泄漏到循环外面。
+        //   ② i <= num   条件，每轮开始前检查；为 true 才执行循环体，为 false 就结束循环
+        //      输入 5 -> 打印 0 1 2 3 4 5（共 6 行）；若写成 <，则只有 0~4。
+        //   ③ i++        步进，每轮结束后执行，等价于 i = i + 1。
+        // 隐含细节：若用户输入小数 3.5，i 依次是 0、1、2、3，
+        //          因为直到 i = 4 时 i <= 3.5 才为 false，相当于“向下取整”后打印。
+        for (let i = 0; i <= num; i++) {
           console.log(i);
         }
       }
-      function blur_inpot1() {
-        alert("输入框获得焦点");
-      }
     </script>
-    <input type="text" onblur="blur_inpot1()" />
-    <div class="box1" onclick="click_box1()">现在是什么时候了？</div>
+  </head>
+  <body>
+    <!-- id="numInput"：给 JS 用 getElementById 定位这个输入框的唯一凭证，两边名字必须完全一致 -->
+    <!-- min / max：只是让浏览器在输入框上给出范围提示和微调（上下箭头）限制，并不阻止用户手打超出范围的数字，真正的拦截仍由 JS 做 -->
+    <input
+      type="number"
+      id="numInput"
+      placeholder="请输入数字"
+      min="0"
+      max="10000"
+    />
+    <div class="box1" onclick="click_box1()">点击触发</div>
   </body>
 </html>
