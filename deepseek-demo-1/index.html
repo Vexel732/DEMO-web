@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>用户登录 · DeepSeek Demo</title>
+  <style>
+    :root {
+      --brand-1: #4f6bff;
+      --brand-2: #8b5cf6;
+      --text: #1f2a44;
+      --muted: #6b7690;
+      --line: #dfe4ef;
+      --danger: #e5484d;
+      --ok: #17a673;
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      padding: 32px 16px;
+      display: grid;
+      place-items: center;
+      font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(900px 600px at 12% 8%, #dbe4ff 0%, transparent 60%),
+        radial-gradient(800px 600px at 88% 18%, #efe1ff 0%, transparent 55%),
+        radial-gradient(700px 500px at 50% 110%, #d6f5ef 0%, transparent 60%),
+        linear-gradient(160deg, #f7f8fc 0%, #eef1f8 100%);
+      overflow-x: hidden;
+    }
+
+    /* 背景装饰光斑 */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(70px);
+      opacity: .55;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .blob.one { width: 320px; height: 320px; background: #8aa2ff; top: -90px; left: -80px; }
+    .blob.two { width: 280px; height: 280px; background: #c9a7ff; bottom: -100px; right: -70px; }
+
+    .login-card {
+      position: relative;
+      z-index: 1;
+      width: min(420px, 100%);
+      background: rgba(255, 255, 255, .86);
+      border: 1px solid rgba(255, 255, 255, .9);
+      border-radius: var(--radius);
+      padding: 38px 34px 30px;
+      box-shadow:
+        0 24px 60px -18px rgba(31, 42, 68, .28),
+        0 2px 10px rgba(31, 42, 68, .05);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      animation: rise .45s ease-out both;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 26px;
+    }
+
+    .logo {
+      width: 44px;
+      height: 44px;
+      flex: none;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+      color: #fff;
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: .5px;
+      box-shadow: 0 8px 18px -6px rgba(79, 107, 255, .7);
+    }
+
+    .brand-text strong {
+      display: block;
+      font-size: 16px;
+      letter-spacing: .2px;
+    }
+    .brand-text span {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 3px;
+      letter-spacing: .4px;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 24px;
+      letter-spacing: .3px;
+    }
+
+    .subtitle {
+      margin: 0 0 26px;
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #33415c;
+    }
+
+    .control {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .control .icon {
+      position: absolute;
+      left: 14px;
+      width: 18px;
+      height: 18px;
+      color: #95a0b8;
+      pointer-events: none;
+      transition: color .2s;
+    }
+
+    .control input {
+      width: 100%;
+      height: 48px;
+      padding: 0 46px 0 42px;
+      font-size: 14.5px;
+      color: var(--text);
+      background: #f6f8fd;
+      border: 1.5px solid transparent;
+      border-radius: 12px;
+      outline: none;
+      transition: border-color .18s, background .18s, box-shadow .18s;
+    }
+
+    .control input::placeholder { color: #a8b1c4; }
+
+    .control input:hover { background: #f1f4fb; }
+
+    .control input:focus {
+      background: #fff;
+      border-color: var(--brand-1);
+      box-shadow: 0 0 0 4px rgba(79, 107, 255, .14);
+    }
+
+    .control:focus-within .icon { color: var(--brand-1); }
+
+    .control input:focus-visible { outline: none; }
+
+    .control.invalid input {
+      border-color: var(--danger);
+      background: #fff5f5;
+      box-shadow: 0 0 0 4px rgba(229, 72, 77, .1);
+    }
+
+    .toggle-pw {
+      position: absolute;
+      right: 6px;
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 9px;
+      background: transparent;
+      color: #95a0b8;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+    .toggle-pw:hover { background: #e9edf7; color: #4a5670; }
+    .toggle-pw:focus-visible {
+      outline: 2px solid var(--brand-1);
+      outline-offset: 2px;
+    }
+    .toggle-pw svg { width: 19px; height: 19px; }
+
+    .error-text {
+      display: none;
+      margin: 7px 2px 0;
+      font-size: 12.5px;
+      color: var(--danger);
+    }
+    .field.invalid .error-text { display: block; }
+
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 4px 0 22px;
+    }
+
+    .remember {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #4a5670;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .remember input {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      margin: 0;
+      flex: none;
+      border: 1.5px solid #c3cbdc;
+      border-radius: 5px;
+      background: #fff;
+      display: grid;
+      place-content: center;
+      cursor: pointer;
+      transition: background .15s, border-color .15s;
+    }
+    .remember input::after {
+      content: "";
+      width: 9px;
+      height: 5px;
+      border-left: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      transform: rotate(-45deg) translate(1px, -1px) scale(0);
+      transition: transform .12s ease-out;
+    }
+    .remember input:checked {
+      background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+      border-color: transparent;
+    }
+    .remember input:checked::after { transform: rotate(-45deg) translate(1px, -1px) scale(1); }
+    .remember input:focus-visible {
+      outline: 2px solid var(--brand-1);
+      outline-offset: 2px;
+    }
+
+    .link {
+      font-size: 13px;
+      color: var(--brand-1);
+      text-decoration: none;
+      border-radius: 4px;
+    }
+    .link:hover { text-decoration: underline; }
+    .link:focus-visible {
+      outline: 2px solid var(--brand-1);
+      outline-offset: 2px;
+    }
+
+    .submit {
+      position: relative;
+      width: 100%;
+      height: 49px;
+      border: 0;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: #fff;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+      box-shadow: 0 12px 24px -10px rgba(79, 107, 255, .75);
+      transition: transform .12s, box-shadow .2s, filter .2s;
+    }
+    .submit:hover { filter: brightness(1.06); }
+    .submit:active { transform: translateY(1px); box-shadow: 0 8px 18px -10px rgba(79, 107, 255, .7); }
+    .submit:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 3px;
+      box-shadow: 0 0 0 5px rgba(79, 107, 255, .3), 0 12px 24px -10px rgba(79, 107, 255, .75);
+    }
+    .submit:disabled { cursor: progress; filter: saturate(.85); }
+
+    .spinner {
+      display: none;
+      width: 16px;
+      height: 16px;
+      margin-right: 8px;
+      vertical-align: -2px;
+      border: 2px solid rgba(255, 255, 255, .45);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    .submit.loading .spinner { display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* 提示消息（成功 / 失败） */
+    .message {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      margin-top: 18px;
+      padding: 12px 14px;
+      font-size: 13px;
+      line-height: 1.5;
+      border-radius: 11px;
+      animation: pop .25s ease-out both;
+    }
+    .message.ok { color: #117a58; background: #e9fbf3; border: 1px solid #bdeedb; }
+    .message.bad { color: #b42318; background: #fef3f2; border: 1px solid #fbd5d2; }
+    .message svg { width: 17px; height: 17px; flex: none; margin-top: 1px; }
+    @keyframes pop {
+      from { opacity: 0; transform: translateY(-5px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .demo-tip {
+      margin: 22px 0 0;
+      padding-top: 18px;
+      border-top: 1px dashed var(--line);
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.7;
+      text-align: center;
+    }
+    .demo-tip code {
+      font-family: "Cascadia Mono", Consolas, monospace;
+      background: #eef1f8;
+      color: #3d4a66;
+      padding: 1px 6px;
+      border-radius: 5px;
+      font-size: 11.5px;
+    }
+
+    @media (max-width: 420px) {
+      .login-card { padding: 30px 22px 26px; }
+      h1 { font-size: 21px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="blob one"></div>
+  <div class="blob two"></div>
+
+  <main class="login-card">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">D</div>
+      <div class="brand-text">
+        <strong>DeepSeek Demo</strong>
+        <span>示例网站 · 用户中心</span>
+      </div>
+    </div>
+
+    <h1>欢迎回来</h1>
+    <p class="subtitle">请使用你的账号登录，继续浏览网站内容。</p>
+
+    <form id="loginForm" novalidate>
+      <div class="field" id="userField">
+        <label for="username">用户名</label>
+        <div class="control">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="8" r="3.6" />
+            <path d="M4.5 20c.9-3.6 3.9-5.6 7.5-5.6s6.6 2 7.5 5.6" />
+          </svg>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="请输入用户名"
+            autocomplete="username"
+            spellcheck="false"
+            aria-describedby="userError"
+          />
+        </div>
+        <p class="error-text" id="userError">请输入用户名（至少 2 个字符）。</p>
+      </div>
+
+      <div class="field" id="pwField">
+        <label for="password">密码</label>
+        <div class="control">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="5" y="10.5" width="14" height="9.5" rx="2.2" />
+            <path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" />
+            <circle cx="12" cy="15.2" r="1.1" fill="currentColor" stroke="none" />
+          </svg>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="请输入密码"
+            autocomplete="current-password"
+            aria-describedby="pwError"
+          />
+          <button type="button" class="toggle-pw" id="togglePw"
+                  aria-label="显示密码" aria-pressed="false" title="显示/隐藏密码">
+            <svg id="eyeOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12Z" />
+              <circle cx="12" cy="12" r="2.8" />
+            </svg>
+            <svg id="eyeOff" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+                 aria-hidden="true" style="display:none">
+              <path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12Z" />
+              <path d="M4 20 20 4" />
+            </svg>
+          </button>
+        </div>
+        <p class="error-text" id="pwError">请输入密码（至少 6 个字符）。</p>
+      </div>
+
+      <div class="row">
+        <label class="remember">
+          <input type="checkbox" id="remember" checked />
+          记住用户名
+        </label>
+        <a class="link" href="#" id="forgotLink">忘记密码？</a>
+      </div>
+
+      <button type="submit" class="submit" id="submitBtn">
+        <span class="spinner" aria-hidden="true"></span>
+        <span class="submit-label">登 录</span>
+      </button>
+
+      <div class="message" id="message" role="status" aria-live="polite" style="display:none"></div>
+    </form>
+
+    <p class="demo-tip">
+      演示账号：<code>admin</code> / <code>123456</code><br />
+      这是一个纯前端示例页面，不会向任何服务器发送数据。
+    </p>
+  </main>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var form = document.getElementById("loginForm");
+      var userInput = document.getElementById("username");
+      var pwInput = document.getElementById("password");
+      var userField = document.getElementById("userField");
+      var pwField = document.getElementById("pwField");
+      var remember = document.getElementById("remember");
+      var submitBtn = document.getElementById("submitBtn");
+      var label = submitBtn.querySelector(".submit-label");
+      var message = document.getElementById("message");
+      var togglePw = document.getElementById("togglePw");
+      var eyeOpen = document.getElementById("eyeOpen");
+      var eyeOff = document.getElementById("eyeOff");
+      var forgotLink = document.getElementById("forgotLink");
+      var STORE_KEY = "ds-demo-username";
+
+      var ICON_OK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+      var ICON_BAD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5"/><circle cx="12" cy="16.6" r=".9" fill="currentColor" stroke="none"/></svg>';
+
+      /* ---------- 记住用户名（localStorage 在 file:// 下可能不可用，做容错） ---------- */
+      function readSavedUser() {
+        try { return localStorage.getItem(STORE_KEY) || ""; } catch (e) { return ""; }
+      }
+      function saveUser(name) {
+        try {
+          if (remember.checked) { localStorage.setItem(STORE_KEY, name); }
+          else { localStorage.removeItem(STORE_KEY); }
+        } catch (e) { /* 忽略：隐私模式等 */ }
+      }
+
+      var saved = readSavedUser();
+      if (saved) { userInput.value = saved; }
+
+      /* ---------- 显示提示 ---------- */
+      function showMessage(type, text) {
+        message.className = "message " + (type === "ok" ? "ok" : "bad");
+        message.innerHTML = (type === "ok" ? ICON_OK : ICON_BAD) + "<span></span>";
+        message.querySelector("span").textContent = text;
+        message.style.display = "flex";
+      }
+      function clearMessage() {
+        message.style.display = "none";
+        message.innerHTML = "";
+      }
+
+      /* ---------- 校验 ---------- */
+      function validateUser() {
+        var v = userInput.value.trim();
+        var ok = v.length >= 2;
+        userField.classList.toggle("invalid", !ok);
+        return ok ? v : null;
+      }
+      function validatePw() {
+        var v = pwInput.value;
+        var ok = v.length >= 6;
+        pwField.classList.toggle("invalid", !ok);
+        return ok;
+      }
+
+      userInput.addEventListener("input", function () {
+        if (userField.classList.contains("invalid")) { validateUser(); }
+        clearMessage();
+      });
+      pwInput.addEventListener("input", function () {
+        if (pwField.classList.contains("invalid")) { validatePw(); }
+        clearMessage();
+      });
+
+      /* ---------- 密码可见性切换 ---------- */
+      togglePw.addEventListener("click", function () {
+        var visible = pwInput.type === "password";
+        pwInput.type = visible ? "text" : "password";
+        eyeOpen.style.display = visible ? "none" : "block";
+        eyeOff.style.display = visible ? "block" : "none";
+        togglePw.setAttribute("aria-pressed", String(visible));
+        togglePw.setAttribute("aria-label", visible ? "隐藏密码" : "显示密码");
+        pwInput.focus({ preventScroll: true });
+      });
+
+      /* ---------- 登录（模拟，无后端） ---------- */
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        clearMessage();
+
+        var name = validateUser();
+        var pwOk = validatePw();
+        if (!name || !pwOk) {
+          showMessage("bad", "请先检查表单：用户名至少 2 个字符，密码至少 6 个字符。");
+          (name ? pwInput : userInput).focus();
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.classList.add("loading");
+        label.textContent = "登录中…";
+
+        // 用定时器模拟一次网络请求
+        window.setTimeout(function () {
+          var pw = pwInput.value;
+          var success = name.toLowerCase() === "admin" && pw === "123456";
+
+          submitBtn.disabled = false;
+          submitBtn.classList.remove("loading");
+          label.textContent = "登 录";
+
+          if (success) {
+            saveUser(name);
+            showMessage("ok", "登录成功，欢迎回来，" + name + "！");
+            pwInput.value = "";
+          } else {
+            showMessage("bad", "用户名或密码不正确，请使用演示账号 admin / 123456 再试。");
+            pwField.classList.add("invalid");
+            pwInput.select();
+            pwInput.focus();
+          }
+        }, 750);
+      });
+
+      /* ---------- 忘记密码（演示提示） ---------- */
+      forgotLink.addEventListener("click", function (event) {
+        event.preventDefault();
+        showMessage("bad", "这是演示页面，暂未提供找回密码功能。请直接使用演示账号 admin / 123456 登录。");
+      });
+
+      /* 初始聚焦（桌面端且未预填用户名时） */
+      if (!userInput.value && window.matchMedia("(min-width: 640px)").matches) {
+        userInput.focus();
+      }
+    })();
+  </script>
+</body>
+</html>
