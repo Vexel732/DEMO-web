@@ -49,6 +49,9 @@
       local_function(); // 调用（见顶部 ⓑ）：此时才会执行上面两行打印
       console.log("函数外打印全局变量" + global); // 函数外也能访问全局变量（字符串拼接同 ③）
       //console.log("函数外打印局部变量"+local);  // 取消注释会报 ReferenceError：local 只存在于 ④ 函数内部
+
+      // ===== 小结：函数就是“打包好的一段代码”——定义时不执行，调用时才执行；
+      //       参数是“传进去的东西”，return 是“交回来的东西”（没有 return 就是 undefined） =====
     </script>
   </body>
 </html>

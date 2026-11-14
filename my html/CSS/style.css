@@ -1,3 +1,8 @@
+/* ===== 本文件是“文本练习,含外部CSS导入.html”的外链样式表 =====
+   三种选择器：标签名 p / 类名 .outcolor / id #outID；
+   同一个元素被多条规则命中时要比“权重”：id > class > 标签名。 */
+
+/* 标签选择器：页面上所有 <p> 都用这个颜色 */
 p {
   color: #8ec5ff;
 }
@@ -10,15 +15,19 @@ p {
   color: #ff7f9c;
   font-size: 35px;
 }
+/* 标签选择器：所有 h3 用这个粉色（字号由后面的“标题层级”分组统一定） */
 h3 {
   color: #ff9db0;
 }
+/* 标签选择器：有序列表的文字变紫，前面的序号也跟着变色 */
 ol {
   color: #c9a6ff;
 }
+/* 类选择器：class="outtable" 的表格整体放大字号，里面的单元格会继承 */
 .outtable {
   font-size: 35px;
 }
+/* id 选择器：#outtable 字号更大还加了颜色，权重比上面的 .outtable 高，会覆盖同名字号 */
 #outtable {
   color: #8fb0ff;
   font-size: 50px;
@@ -69,7 +78,8 @@ body {
   animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) both; /* 卡片先入场 */
 }
 
-/* ===== 文字排版：标题层级 ===== */
+/* ===== 文字排版：标题层级 =====
+   h1,h2,h3,h4,h5 用逗号连起来叫“分组选择器”，几条规则写一样时可以合并，省得重复写 */
 h1,
 h2,
 h3,
@@ -99,15 +109,17 @@ h5 {
   font-size: 16px;
 }
 
-/* 段落与列表 */
+/* 段落与列表：margin: 10px 0 是简写 —— 上下 10px、左右 0 */
 p {
   margin: 10px 0;
 }
+/* 两种列表都往里缩进：padding-left 用 em 做单位，会跟着字号一起变大变小 */
 ul,
 ol {
   margin: 12px 0;
   padding-left: 1.8em;
 }
+/* li 是每个列表项，上下留一点间距更好读 */
 li {
   margin: 4px 0;
 }
@@ -115,17 +127,19 @@ ul {
   list-style: square; /* 暗底上方块比圆点更清楚 */
 }
 
-/* 通用表格（原有 3 张表）在暗底上的边框与内边距 */
+/* 通用表格（原有 3 张表）在暗底上的边框与内边距；
+   border-color 只改颜色，边框粗细仍来自 HTML 里的 border="2" 这类老属性 */
 table {
   margin: 16px 0 28px;
   border-color: rgba(255, 255, 255, 0.24);
 }
+/* 表头格 th 和数据格 td 统一内边距，格子里的字就不挤了 */
 th,
 td {
   padding: 6px 12px;
 }
 
-/* 图片排版 */
+/* 图片排版：margin 让图片之间留缝，vertical-align 让图片和旁边文字对齐 */
 img {
   margin: 6px 10px 6px 0;
   vertical-align: middle;
@@ -133,7 +147,9 @@ img {
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
 }
 
-/* ===== 新增：暗色主题表格 ===== */
+/* ===== 新增：暗色主题表格 =====
+   width: 100% 让表格铺满卡片；border-collapse: separate + border-spacing: 0
+   是为了保留圆角（如果合并边框，圆角会被格子边线切掉） */
 .darktable {
   width: 100%;
   border-collapse: separate; /* 配合圆角裁切 */
@@ -145,6 +161,7 @@ img {
   box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
   font-size: 15px;
 }
+/* caption 是表格标题：caption-side: top 放在表格上方，text-align: left 靠左 */
 .darktable caption {
   caption-side: top;
   text-align: left;
@@ -153,23 +170,28 @@ img {
   font-size: 14px;
   letter-spacing: 1.5px;
 }
+/* 这张表用细横线代替网格：每格只画下边框，看起来更清爽 */
 .darktable th,
 .darktable td {
   padding: 13px 16px;
   text-align: left;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
+/* 表头行单独加底色和亮绿色文字，和内容区分开 */
 .darktable thead th {
   background-color: rgba(42, 214, 177, 0.16);
   color: #6ff2d0;
 }
+/* :nth-child(even) 选中“偶数行”，做出斑马纹效果（奇数行保持透明） */
 .darktable tbody tr:nth-child(even) {
   background-color: rgba(255, 255, 255, 0.04);
 }
+/* 鼠标移入某一行时高亮，transition 让变色过程平滑一点 */
 .darktable tbody tr:hover {
   background-color: rgba(42, 214, 177, 0.12);
   transition: background-color 0.25s ease;
 }
+/* 表尾不需要再画下边框，文字颜色调暗一点表示“收尾信息” */
 .darktable tfoot td {
   border-bottom: none;
   color: #9fb3c8;
@@ -192,7 +214,8 @@ img {
   animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* 逐个子元素递增 0.05s 延迟，形成“瀑布式”入场（共 24 个直接子元素） */
+/* 逐个子元素递增 0.05s 延迟，形成“瀑布式”入场（共 24 个直接子元素）
+   :nth-child(n) 表示“第 n 个同级子元素”；下面 24 条规律完全一样，只是延迟依次 +0.05s */
 .card > *:nth-child(1) {
   animation-delay: 0.1s;
 }

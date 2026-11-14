@@ -2,28 +2,38 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <!-- viewport 让手机按“设备宽度”排版；这里 width= 后面少了 device-width（标准写法见其它文件），
+         本次只做提示、不改代码 -->
     <meta name="viewport" content="width=, initial-scale=1.0" />
     <title>表单练习</title>
     <style></style>
   </head>
   <body>
+    <!-- form 是表单容器：action 是提交到的地址（这里用 # 表示留在本页），
+         method 决定提交方式，不写默认是 get -->
     <form action="#">
       <!--//todo: action中填后端URLaaa-->
+      <!-- label 的 for 必须和 input 的 id 一模一样，这样点“用户名”三个字也能让输入框获得焦点 -->
       <label for="username">用户名</label>
       <!--文本专门用于和input绑定-->
+      <!-- type="text" 是单行文本框；placeholder 是灰色提示字，不会被当成内容提交 -->
       <input type="text" id="username" placeholder="请输入用户名" />
       <br />
       <!--换行-->
+      <!-- type="password" 把输入内容显示成圆点，但提交上去仍是原文 -->
       <label for="password">密码 </label>
       <input type="password" id="password" placeholder="请输入密码" />
       <br />
 
+      <!-- 单选框：同一组要写相同的 name（这里都是 gender），组内才互斥、只能选一个；
+           两个选项没写 id，所以 label 的 for 是空的，点“性别”不会关联到它们 -->
       <label for="">性别</label>
       <input type="radio" name="gender" />男
       <input type="radio" name="gender" />女
       <hr />
       <!--分割线-->
 
+      <!-- 复选框：相同的 name 可以同时选中多个，提交时是一组值 -->
       <label for="">爱好</label>
       <input type="checkbox" name="hobby" />篮球
       <input type="checkbox" name="hobby" />足球
@@ -31,6 +41,7 @@
       <input type="checkbox" name="hobby" />垒球
       <hr />
 
+      <!-- type="submit" 是提交按钮：点击后触发表单提交，把各输入框里的 name / 值发给 action 地址 -->
       <input type="submit" />
       <!--//todo 提交按钮配合后端url使用 -->
     </form>

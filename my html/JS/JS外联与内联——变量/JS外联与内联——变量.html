@@ -6,16 +6,23 @@
     <title>Document</title>
     <script src="./外联1.js"></script>
     <!-- 调用外联JS1 -->
+    <!-- src 引入的是“外联”脚本：JS 写在单独的 .js 文件里，多个页面都能复用；
+         直接写在 script 标签里的叫“内联”脚本，只对当前页面有效 -->
     <script>
       console.log("hello,word! 来自head"); //控制台打印字符
     </script>
     <script src="./外联2.js"></script>
     <!-- 调用外联JS2 -->
+    <!-- 浏览器从上往下执行，所以控制台里的输出顺序是：外联1 → head → 外联2 → body -->
   </head>
   <body>
     <h1>JS测试</h1>
     <script>
       console.log("hello,word! 来自body"); //控制台打印字符
+      // ---------- 三种声明方式对比 ----------
+      // var：老写法，函数作用域；let：块级作用域、值可以改（日常首选）；
+      // const：常量，声明时必须赋值、之后不能再改。
+      // 小提醒：JS 里 5 和 3.14 都属于同一种 Number 类型，不像别的语言还分整型和浮点型
       //以下为变量，一般变量只使用 let
       var X; //变量 具有函数作用域
       let Y = 5; //变量 具有快级作用域 5为整型
@@ -24,6 +31,8 @@
       //X输出显示undefined,表示变量已被声明但没有被赋值或者对象属性不存在
       let text = "hello,word 来自变量text"; //变量 字符串
       console.log(text);
+      // undefined 和 null 都是“空”，区别在来源：undefined 多是“声明了没赋值”，
+      // null 是“程序员主动清空”；另外 typeof null 会返回 "object"，属历史遗留的坑
       let empty_value = null; //null表示变量被明确赋值为空或者不存在
       console.log(empty_value); //输出null表示变量被明确赋值为空或者不存在
     </script>

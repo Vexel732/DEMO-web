@@ -1,592 +1,985 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>用户登录 · DeepSeek Demo</title>
-  <style>
-    :root {
-      --brand-1: #4f6bff;
-      --brand-2: #8b5cf6;
-      --text: #1f2a44;
-      --muted: #6b7690;
-      --line: #dfe4ef;
-      --danger: #e5484d;
-      --ok: #17a673;
-      --radius: 18px;
-    }
-
-    * { box-sizing: border-box; }
-
-    html, body { height: 100%; }
-
-    body {
-      margin: 0;
-      padding: 32px 16px;
-      display: grid;
-      place-items: center;
-      font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", system-ui, -apple-system, sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(900px 600px at 12% 8%, #dbe4ff 0%, transparent 60%),
-        radial-gradient(800px 600px at 88% 18%, #efe1ff 0%, transparent 55%),
-        radial-gradient(700px 500px at 50% 110%, #d6f5ef 0%, transparent 60%),
-        linear-gradient(160deg, #f7f8fc 0%, #eef1f8 100%);
-      overflow-x: hidden;
-    }
-
-    /* 背景装饰光斑 */
-    .blob {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(70px);
-      opacity: .55;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .blob.one { width: 320px; height: 320px; background: #8aa2ff; top: -90px; left: -80px; }
-    .blob.two { width: 280px; height: 280px; background: #c9a7ff; bottom: -100px; right: -70px; }
-
-    .login-card {
-      position: relative;
-      z-index: 1;
-      width: min(420px, 100%);
-      background: rgba(255, 255, 255, .86);
-      border: 1px solid rgba(255, 255, 255, .9);
-      border-radius: var(--radius);
-      padding: 38px 34px 30px;
-      box-shadow:
-        0 24px 60px -18px rgba(31, 42, 68, .28),
-        0 2px 10px rgba(31, 42, 68, .05);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      animation: rise .45s ease-out both;
-    }
-
-    @keyframes rise {
-      from { opacity: 0; transform: translateY(14px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 26px;
-    }
-
-    .logo {
-      width: 44px;
-      height: 44px;
-      flex: none;
-      border-radius: 13px;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
-      color: #fff;
-      font-weight: 700;
-      font-size: 20px;
-      letter-spacing: .5px;
-      box-shadow: 0 8px 18px -6px rgba(79, 107, 255, .7);
-    }
-
-    .brand-text strong {
-      display: block;
-      font-size: 16px;
-      letter-spacing: .2px;
-    }
-    .brand-text span {
-      display: block;
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 3px;
-      letter-spacing: .4px;
-    }
-
-    h1 {
-      margin: 0 0 6px;
-      font-size: 24px;
-      letter-spacing: .3px;
-    }
-
-    .subtitle {
-      margin: 0 0 26px;
-      font-size: 13.5px;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    .field {
-      margin-bottom: 18px;
-    }
-
-    .field label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: #33415c;
-    }
-
-    .control {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-
-    .control .icon {
-      position: absolute;
-      left: 14px;
-      width: 18px;
-      height: 18px;
-      color: #95a0b8;
-      pointer-events: none;
-      transition: color .2s;
-    }
-
-    .control input {
-      width: 100%;
-      height: 48px;
-      padding: 0 46px 0 42px;
-      font-size: 14.5px;
-      color: var(--text);
-      background: #f6f8fd;
-      border: 1.5px solid transparent;
-      border-radius: 12px;
-      outline: none;
-      transition: border-color .18s, background .18s, box-shadow .18s;
-    }
-
-    .control input::placeholder { color: #a8b1c4; }
-
-    .control input:hover { background: #f1f4fb; }
-
-    .control input:focus {
-      background: #fff;
-      border-color: var(--brand-1);
-      box-shadow: 0 0 0 4px rgba(79, 107, 255, .14);
-    }
-
-    .control:focus-within .icon { color: var(--brand-1); }
-
-    .control input:focus-visible { outline: none; }
-
-    .control.invalid input {
-      border-color: var(--danger);
-      background: #fff5f5;
-      box-shadow: 0 0 0 4px rgba(229, 72, 77, .1);
-    }
-
-    .toggle-pw {
-      position: absolute;
-      right: 6px;
-      width: 36px;
-      height: 36px;
-      display: grid;
-      place-items: center;
-      border: 0;
-      border-radius: 9px;
-      background: transparent;
-      color: #95a0b8;
-      cursor: pointer;
-      transition: background .15s, color .15s;
-    }
-    .toggle-pw:hover { background: #e9edf7; color: #4a5670; }
-    .toggle-pw:focus-visible {
-      outline: 2px solid var(--brand-1);
-      outline-offset: 2px;
-    }
-    .toggle-pw svg { width: 19px; height: 19px; }
-
-    .error-text {
-      display: none;
-      margin: 7px 2px 0;
-      font-size: 12.5px;
-      color: var(--danger);
-    }
-    .field.invalid .error-text { display: block; }
-
-    .row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin: 4px 0 22px;
-    }
-
-    .remember {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      color: #4a5670;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .remember input {
-      appearance: none;
-      -webkit-appearance: none;
-      width: 16px;
-      height: 16px;
-      margin: 0;
-      flex: none;
-      border: 1.5px solid #c3cbdc;
-      border-radius: 5px;
-      background: #fff;
-      display: grid;
-      place-content: center;
-      cursor: pointer;
-      transition: background .15s, border-color .15s;
-    }
-    .remember input::after {
-      content: "";
-      width: 9px;
-      height: 5px;
-      border-left: 2px solid #fff;
-      border-bottom: 2px solid #fff;
-      transform: rotate(-45deg) translate(1px, -1px) scale(0);
-      transition: transform .12s ease-out;
-    }
-    .remember input:checked {
-      background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
-      border-color: transparent;
-    }
-    .remember input:checked::after { transform: rotate(-45deg) translate(1px, -1px) scale(1); }
-    .remember input:focus-visible {
-      outline: 2px solid var(--brand-1);
-      outline-offset: 2px;
-    }
-
-    .link {
-      font-size: 13px;
-      color: var(--brand-1);
-      text-decoration: none;
-      border-radius: 4px;
-    }
-    .link:hover { text-decoration: underline; }
-    .link:focus-visible {
-      outline: 2px solid var(--brand-1);
-      outline-offset: 2px;
-    }
-
-    .submit {
-      position: relative;
-      width: 100%;
-      height: 49px;
-      border: 0;
-      border-radius: 12px;
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: 1px;
-      color: #fff;
-      cursor: pointer;
-      background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
-      box-shadow: 0 12px 24px -10px rgba(79, 107, 255, .75);
-      transition: transform .12s, box-shadow .2s, filter .2s;
-    }
-    .submit:hover { filter: brightness(1.06); }
-    .submit:active { transform: translateY(1px); box-shadow: 0 8px 18px -10px rgba(79, 107, 255, .7); }
-    .submit:focus-visible {
-      outline: 2px solid #fff;
-      outline-offset: 3px;
-      box-shadow: 0 0 0 5px rgba(79, 107, 255, .3), 0 12px 24px -10px rgba(79, 107, 255, .75);
-    }
-    .submit:disabled { cursor: progress; filter: saturate(.85); }
-
-    .spinner {
-      display: none;
-      width: 16px;
-      height: 16px;
-      margin-right: 8px;
-      vertical-align: -2px;
-      border: 2px solid rgba(255, 255, 255, .45);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin .7s linear infinite;
-    }
-    .submit.loading .spinner { display: inline-block; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* 提示消息（成功 / 失败） */
-    .message {
-      display: flex;
-      align-items: flex-start;
-      gap: 9px;
-      margin-top: 18px;
-      padding: 12px 14px;
-      font-size: 13px;
-      line-height: 1.5;
-      border-radius: 11px;
-      animation: pop .25s ease-out both;
-    }
-    .message.ok { color: #117a58; background: #e9fbf3; border: 1px solid #bdeedb; }
-    .message.bad { color: #b42318; background: #fef3f2; border: 1px solid #fbd5d2; }
-    .message svg { width: 17px; height: 17px; flex: none; margin-top: 1px; }
-    @keyframes pop {
-      from { opacity: 0; transform: translateY(-5px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .demo-tip {
-      margin: 22px 0 0;
-      padding-top: 18px;
-      border-top: 1px dashed var(--line);
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.7;
-      text-align: center;
-    }
-    .demo-tip code {
-      font-family: "Cascadia Mono", Consolas, monospace;
-      background: #eef1f8;
-      color: #3d4a66;
-      padding: 1px 6px;
-      border-radius: 5px;
-      font-size: 11.5px;
-    }
-
-    @media (max-width: 420px) {
-      .login-card { padding: 30px 22px 26px; }
-      h1 { font-size: 21px; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: .001ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: .001ms !important;
+  <!-- ==================== 文件总览 ====================
+       这是一个纯前端的登录页示例，从上到下分三块：
+       1. 头部的 CSS：主题变量 → 页面布局 → 卡片/标题 → 表单控件 → 按钮与提示 → 动画与适配
+       2. 页面主体的 HTML：背景光斑 + 登录卡片（品牌区、标题、表单、底部说明）
+       3. 末尾的 JS：取元素 → 记住用户名 → 通用提示 → 校验 → 各交互 → 模拟登录
+       学习顺序建议：先看 HTML 结构，再按 class 名找到对应 CSS，最后读 JS。 -->
+  <head>
+    <!-- charset="UTF-8"：声明文件用 UTF-8 编码，避免中文乱码 -->
+    <meta charset="UTF-8" />
+    <!-- viewport 让手机浏览器按设备宽度显示，initial-scale=1.0 表示初始不缩放 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>用户登录 · DeepSeek Demo</title>
+    <style>
+      /* ==================== 主题变量 ====================
+       :root 代表文档根元素 <html>。
+       以 -- 开头的属性叫 CSS 变量，用 var(--名字) 取值，
+       集中放在这里，改一处颜色全页面同步变化。 */
+      :root {
+        --brand-1: #4f6bff; /* 主品牌色（按钮渐变起点） */
+        --brand-2: #8b5cf6; /* 次品牌色（按钮渐变终点） */
+        --text: #1f2a44; /* 正文文字颜色 */
+        --muted: #6b7690; /* 次要文字颜色（副标题、说明） */
+        --line: #dfe4ef; /* 分割线颜色 */
+        --danger: #e5484d; /* 错误提示红色 */
+        --ok: #17a673; /* 成功提示绿色 */
+        --radius: 18px; /* 卡片圆角大小 */
       }
-    }
-  </style>
-</head>
-<body>
-  <div class="blob one"></div>
-  <div class="blob two"></div>
 
-  <main class="login-card">
-    <div class="brand">
-      <div class="logo" aria-hidden="true">D</div>
-      <div class="brand-text">
-        <strong>DeepSeek Demo</strong>
-        <span>示例网站 · 用户中心</span>
-      </div>
-    </div>
+      /* 统一盒模型：
+       默认 content-box 时，width 只算内容，padding/border 会额外撑大盒子；
+       改成 border-box 后，宽高包含 padding 和 border，布局更好算。 */
+      * {
+        box-sizing: border-box;
+      }
 
-    <h1>欢迎回来</h1>
-    <p class="subtitle">请使用你的账号登录，继续浏览网站内容。</p>
+      /* 让 html 和 body 的高度都等于浏览器窗口高度 */
+      html,
+      body {
+        height: 100%;
+      }
 
-    <form id="loginForm" novalidate>
-      <div class="field" id="userField">
-        <label for="username">用户名</label>
-        <div class="control">
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="8" r="3.6" />
-            <path d="M4.5 20c.9-3.6 3.9-5.6 7.5-5.6s6.6 2 7.5 5.6" />
-          </svg>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            placeholder="请输入用户名"
-            autocomplete="username"
-            spellcheck="false"
-            aria-describedby="userError"
-          />
+      body {
+        margin: 0; /* 去掉浏览器默认的 8px 外边距 */
+        padding: 32px 16px; /* 内边距：上下 32px，左右 16px */
+        display: grid; /* 网格布局：让里面的卡片居中 */
+        place-items: center; /* 水平、垂直都居中 */
+        /* 字体列表：浏览器按顺序查找，用第一个系统里装了的字体，都没有就用最后的 sans-serif。
+         "PingFang SC"：苹果苹方；"Microsoft YaHei"：Windows 微软雅黑；
+         "Segoe UI"：Windows 界面字体；system-ui：系统默认界面字体；
+         -apple-system：苹果系统字体；sans-serif：无衬线字体兜底。 */
+        font-family:
+          "PingFang SC",
+          "Microsoft YaHei",
+          "Segoe UI",
+          system-ui,
+          -apple-system,
+          sans-serif;
+        color: var(--text); /* 全局默认文字颜色 */
+        /* 背景由 4 层渐变叠加，先写的在最上层：
+         - radial-gradient(900px 600px at 12% 8%, 颜色 0%, transparent 60%)：
+           径向渐变，从中心向外过渡；900px 600px 是渐变椭圆大小，
+           at 12% 8% 是圆心位置（相对左上角）；颜色到 60% 处变成完全透明。
+         - linear-gradient(160deg, 色1, 色2)：线性渐变，160deg 是方向，
+           从左上往右下过渡。
+         上层透明的地方露出下层，叠出柔和的光晕效果。 */
+        background:
+          radial-gradient(900px 600px at 12% 8%, #dbe4ff 0%, transparent 60%),
+          radial-gradient(800px 600px at 88% 18%, #efe1ff 0%, transparent 55%),
+          radial-gradient(700px 500px at 50% 110%, #d6f5ef 0%, transparent 60%),
+          linear-gradient(160deg, #f7f8fc 0%, #eef1f8 100%);
+        overflow-x: hidden; /* 禁止横向滚动条 */
+      }
+
+      /* 背景装饰光斑：
+       filter: blur(70px) 把色块模糊成柔和的一团光；
+       position: fixed 固定在视口上，页面滚动时不动；
+       pointer-events: none 让鼠标点击“穿过”它，不挡住下面的表单；
+       z-index 数值越小层级越低，光斑放在卡片后面。 */
+      .blob {
+        position: fixed;
+        border-radius: 50%; /* 圆角 50% 就变成圆形 */
+        filter: blur(70px); /* 模糊，形成光晕 */
+        opacity: 0.55; /* 半透明 */
+        pointer-events: none;
+        z-index: 0; /* 层级 0，在卡片（1）下面 */
+      }
+      /* 光斑一：放在左上角；top/left 用负值，让它有一部分跑到屏幕外面，看起来更自然 */
+      .blob.one {
+        width: 320px;
+        height: 320px;
+        background: #8aa2ff;
+        top: -90px;
+        left: -80px;
+      }
+      /* 光斑二：放在右下角，用 bottom/right 定位（和 top/left 二选一即可） */
+      .blob.two {
+        width: 280px;
+        height: 280px;
+        background: #c9a7ff;
+        bottom: -100px;
+        right: -70px;
+      }
+
+      /* 登录卡片：
+       position: relative 配合 z-index: 1，让它盖在光斑上面；
+       width: min(420px, 100%) 取两者较小值：窗口宽最多 420px，窄屏就占满；
+       rgba(255,255,255,.86) 是白色，最后一位 .86 是透明度（1 为不透明）；
+       box-shadow 里的数值依次是：水平偏移、垂直偏移、模糊半径、扩散半径（负值收缩）、颜色，
+       可以写多组逗号隔开，叠出有层次感的阴影；
+       backdrop-filter: blur(14px) 让卡片背后的背景变模糊，形成“毛玻璃”；
+       animation 简写：动画名 rise、时长 .45s、缓动 ease-out、both 表示结束后保持最后一帧。 */
+      .login-card {
+        position: relative;
+        z-index: 1;
+        width: min(420px, 100%);
+        background: rgba(255, 255, 255, 0.86);
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        border-radius: var(--radius);
+        padding: 38px 34px 30px;
+        box-shadow:
+          0 24px 60px -18px rgba(31, 42, 68, 0.28),
+          0 2px 10px rgba(31, 42, 68, 0.05);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px); /* Safari 需要带前缀的写法 */
+        animation: rise 0.45s ease-out both;
+      }
+
+      /* 入场动画：
+       @keyframes 定义动画的关键帧，from 是开始、to 是结束，
+       浏览器会自动在两者之间补间。
+       transform: translateY(14px) 表示向下偏移 14px，变成 0 就是回到原位。 */
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* 品牌区：
+       display: flex 弹性布局，子元素排成一行；
+       align-items: center 让它们垂直居中对齐；
+       gap: 12px 是子元素之间的间距。 */
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 26px;
+      }
+
+      /* Logo 方块：
+       flex: none 表示不参与伸缩，始终保持 44×44；
+       display: grid + place-items: center 让字母 D 居中；
+       linear-gradient(135deg, 色1, 色2)：线性渐变，135deg 是从左上到右下，
+       两种颜色平滑过渡。 */
+      .logo {
+        width: 44px;
+        height: 44px;
+        flex: none;
+        border-radius: 13px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+        color: #fff;
+        font-weight: 700;
+        font-size: 20px;
+        letter-spacing: 0.5px;
+        box-shadow: 0 8px 18px -6px rgba(79, 107, 255, 0.7);
+      }
+
+      /* strong 和 span 默认是行内元素，改为 block 才能各占一行 */
+      .brand-text strong {
+        display: block;
+        font-size: 16px;
+        letter-spacing: 0.2px;
+      }
+      .brand-text span {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 3px;
+        letter-spacing: 0.4px;
+      }
+
+      /* 标题：
+       margin 简写规律是 上 右 下 左；
+       这里写 0 0 6px，表示上 0、左右 0、下 6px。
+       letter-spacing 是字间距，font-size 是字号。 */
+      h1 {
+        margin: 0 0 6px;
+        font-size: 24px;
+        letter-spacing: 0.3px;
+      }
+
+      /* 副标题：line-height 是行高，1.6 表示文字高度的 1.6 倍，多行更透气 */
+      .subtitle {
+        margin: 0 0 26px;
+        font-size: 13.5px;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      /* 每个表单字段的外层，用下外边距把字段隔开 */
+      .field {
+        margin-bottom: 18px;
+      }
+
+      /* 标签：font-weight: 600 是半粗体 */
+      .field label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #33415c;
+      }
+
+      /* 输入框外层：
+       position: relative 给下面的图标和眼睛按钮当“定位参照物”，
+       它们用 absolute 定位时，坐标相对这里算。 */
+      .control {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      /* 输入框左侧的小图标：
+       position: absolute 绝对定位，left: 14px 表示距左边 14px；
+       pointer-events: none 图标不响应鼠标，不会挡住输入框的点击；
+       transition: 过渡，color .2s 表示颜色变化用 0.2 秒平滑完成。 */
+      .control .icon {
+        position: absolute;
+        left: 14px;
+        width: 18px;
+        height: 18px;
+        color: #95a0b8;
+        pointer-events: none;
+        transition: color 0.2s;
+      }
+
+      /* 输入框外观：
+       padding: 上 右 下 左 = 0 46px 0 42px，
+       左边留 42px 放图标，右边留 46px 放眼睛按钮；
+       border: 1.5px solid transparent 先画透明边框，避免聚焦时才出现边框导致“跳动”；
+       outline: none 去掉浏览器默认的聚焦外框，改用下面的 box-shadow 发光；
+       transition 列出哪些属性变化时要平滑过渡、各用多久。 */
+      .control input {
+        width: 100%;
+        height: 48px;
+        padding: 0 46px 0 42px;
+        font-size: 14.5px;
+        color: var(--text);
+        background: #f6f8fd;
+        border: 1.5px solid transparent;
+        border-radius: 12px;
+        outline: none;
+        transition:
+          border-color 0.18s,
+          background 0.18s,
+          box-shadow 0.18s;
+      }
+
+      /* ::placeholder 是伪元素，专门改输入框里“请输入…”这行占位文字的颜色 */
+      .control input::placeholder {
+        color: #a8b1c4;
+      }
+
+      /* :hover 鼠标悬停时触发 */
+      .control input:hover {
+        background: #f1f4fb;
+      }
+
+      /* :focus 输入框获得焦点时触发（点进去或用 Tab 键选中） */
+      .control input:focus {
+        background: #fff;
+        border-color: var(--brand-1);
+        box-shadow: 0 0 0 4px rgba(79, 107, 255, 0.14);
+      }
+
+      /* :focus-within 表示“容器里的某个元素获得焦点时”触发，
+       这里让输入框聚焦时，左侧图标一起变蓝 */
+      .control:focus-within .icon {
+        color: var(--brand-1);
+      }
+
+      /* :focus-visible 只在键盘操作（如 Tab）时生效，鼠标点击不显示外框 */
+      .control input:focus-visible {
+        outline: none;
+      }
+
+      /* 校验失败：JS 会给 .field 加上 invalid 类，
+       这条规则让输入框变红框 + 浅红底 + 红色光晕 */
+      .control.invalid input {
+        border-color: var(--danger);
+        background: #fff5f5;
+        box-shadow: 0 0 0 4px rgba(229, 72, 77, 0.1);
+      }
+
+      /* 密码显示/隐藏按钮：
+       position: absolute + right: 6px 贴在输入框右侧；
+       display: grid + place-items: center 让图标居中；
+       border: 0 去掉按钮默认边框，background: transparent 让背景透明；
+       cursor: pointer 鼠标移上去变成小手。 */
+      .toggle-pw {
+        position: absolute;
+        right: 6px;
+        width: 36px;
+        height: 36px;
+        display: grid;
+        place-items: center;
+        border: 0;
+        border-radius: 9px;
+        background: transparent;
+        color: #95a0b8;
+        cursor: pointer;
+        transition:
+          background 0.15s,
+          color 0.15s;
+      }
+      .toggle-pw:hover {
+        background: #e9edf7;
+        color: #4a5670;
+      }
+      .toggle-pw:focus-visible {
+        outline: 2px solid var(--brand-1);
+        outline-offset: 2px; /* 外框离元素留 2px 间隙 */
+      }
+      .toggle-pw svg {
+        width: 19px;
+        height: 19px;
+      }
+
+      /* 错误文字：display: none 默认隐藏（不占位置、看不见）；
+       .field.invalid .error-text 是后代选择器，意思是
+       “带 invalid 类的 .field 里面的 .error-text”才显示。
+       空格表示后代关系，不是同时满足两个类。 */
+      .error-text {
+        display: none;
+        margin: 7px 2px 0;
+        font-size: 12.5px;
+        color: var(--danger);
+      }
+      .field.invalid .error-text {
+        display: block;
+      }
+
+      /* “记住我”与“忘记密码”一行：
+       justify-content: space-between 让两个子元素分别贴左、贴右。 */
+      .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 4px 0 22px;
+      }
+
+      /* 记住用户名：
+       inline-flex 表示它本身像文字一样排在行内，内部又用弹性布局；
+       user-select: none 防止双击/拖动时选中文字。 */
+      .remember {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: #4a5670;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      /* 自定义复选框：
+       appearance: none 去掉浏览器原生复选框的样式，然后用下面的样式自己画；
+       display: grid + place-content: center 让里面的对勾居中；
+       margin: 0 去掉默认外边距。 */
+      .remember input {
+        appearance: none;
+        -webkit-appearance: none; /* Safari 兼容写法 */
+        width: 16px;
+        height: 16px;
+        margin: 0;
+        flex: none;
+        border: 1.5px solid #c3cbdc;
+        border-radius: 5px;
+        background: #fff;
+        display: grid;
+        place-content: center;
+        cursor: pointer;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+
+      /* ::after 是伪元素，相当于在元素内部“凭空”加了一个子元素；
+       content: "" 必须写，否则伪元素不显示；
+       两条相邻边框（左边框 + 下边框）拼成直角，旋转 -45° 就像对勾；
+       scale(0) 把它缩成 0（不可见），勾选时再放到 scale(1)。 */
+      .remember input::after {
+        content: "";
+        width: 9px;
+        height: 5px;
+        border-left: 2px solid #fff;
+        border-bottom: 2px solid #fff;
+        transform: rotate(-45deg) translate(1px, -1px) scale(0);
+        transition: transform 0.12s ease-out;
+      }
+
+      /* :checked 表示复选框被选中的状态 */
+      .remember input:checked {
+        background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+        border-color: transparent;
+      }
+      .remember input:checked::after {
+        transform: rotate(-45deg) translate(1px, -1px) scale(1);
+      }
+      .remember input:focus-visible {
+        outline: 2px solid var(--brand-1);
+        outline-offset: 2px;
+      }
+
+      /* 文字链接：text-decoration: none 去掉下划线 */
+      .link {
+        font-size: 13px;
+        color: var(--brand-1);
+        text-decoration: none;
+        border-radius: 4px;
+      }
+      .link:hover {
+        text-decoration: underline;
+      }
+      .link:focus-visible {
+        outline: 2px solid var(--brand-1);
+        outline-offset: 2px;
+      }
+
+      /* 登录按钮：
+       letter-spacing: 1px 让“登 录”两个字稍微拉开；
+       box-shadow 做按钮下方柔和的投影；
+       transition 里分别给 transform、box-shadow、filter 设置过渡时长。 */
+      .submit {
+        position: relative;
+        width: 100%;
+        height: 49px;
+        border: 0;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        color: #fff;
+        cursor: pointer;
+        background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+        box-shadow: 0 12px 24px -10px rgba(79, 107, 255, 0.75);
+        transition:
+          transform 0.12s,
+          box-shadow 0.2s,
+          filter 0.2s;
+      }
+      /* filter: brightness(1.06) 把整体亮度提高 6%，悬停时按钮更亮 */
+      .submit:hover {
+        filter: brightness(1.06);
+      }
+      /* :active 按下鼠标时触发，translateY(1px) 让按钮轻微下沉 */
+      .submit:active {
+        transform: translateY(1px);
+        box-shadow: 0 8px 18px -10px rgba(79, 107, 255, 0.7);
+      }
+      .submit:focus-visible {
+        outline: 2px solid #fff;
+        outline-offset: 3px;
+        box-shadow:
+          0 0 0 5px rgba(79, 107, 255, 0.3),
+          0 12px 24px -10px rgba(79, 107, 255, 0.75);
+      }
+      /* :disabled 禁用状态（登录请求中）：鼠标样式变成“等待”，颜色稍微变灰 */
+      .submit:disabled {
+        cursor: progress;
+        filter: saturate(0.85);
+      }
+
+      /* 加载转圈：
+       用 border 画一个圆：四边浅色，只把顶部边框改成白色；
+       再让它绕中心旋转，看起来就像转圈加载。
+       默认 display: none 不显示，按钮带 .loading 时才出现。 */
+      .spinner {
+        display: none;
+        width: 16px;
+        height: 16px;
+        margin-right: 8px;
+        vertical-align: -2px; /* 和文字基线对齐的微调 */
+        border: 2px solid rgba(255, 255, 255, 0.45);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite; /* 匀速无限旋转 */
+      }
+      .submit.loading .spinner {
+        display: inline-block;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* 提示消息（成功 / 失败）：
+       .ok 和 .bad 在 JS 里二选一加到消息条上，控制配色；
+       animation: pop 让消息条出现时轻微弹出。 */
+      .message {
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+        margin-top: 18px;
+        padding: 12px 14px;
+        font-size: 13px;
+        line-height: 1.5;
+        border-radius: 11px;
+        animation: pop 0.25s ease-out both;
+      }
+      .message.ok {
+        color: #117a58;
+        background: #e9fbf3;
+        border: 1px solid #bdeedb;
+      }
+      .message.bad {
+        color: #b42318;
+        background: #fef3f2;
+        border: 1px solid #fbd5d2;
+      }
+      .message svg {
+        width: 17px;
+        height: 17px;
+        flex: none;
+        margin-top: 1px;
+      }
+
+      /* 消息条弹出动画：从上方 5px 处淡入到原位 */
+      @keyframes pop {
+        from {
+          opacity: 0;
+          transform: translateY(-5px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* 底部演示账号说明：
+       border-top 用 dashed 画虚线分隔；
+       text-align: center 让文字居中。 */
+      .demo-tip {
+        margin: 22px 0 0;
+        padding-top: 18px;
+        border-top: 1px dashed var(--line);
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.7;
+        text-align: center;
+      }
+      /* code 是等宽字体，专门显示代码/账号，看起来更像“代码” */
+      .demo-tip code {
+        font-family: "Cascadia Mono", Consolas, monospace;
+        background: #eef1f8;
+        color: #3d4a66;
+        padding: 1px 6px;
+        border-radius: 5px;
+        font-size: 11.5px;
+      }
+
+      /* 媒体查询：窗口宽度 ≤ 420px（手机屏幕）时执行里面的规则 */
+      @media (max-width: 420px) {
+        .login-card {
+          padding: 30px 22px 26px;
+        }
+        h1 {
+          font-size: 21px;
+        }
+      }
+
+      /* 系统设置里开启“减少动态效果”（照顾对动画敏感的用户）时，
+       把动画和过渡的时长压到几乎为 0，相当于关闭动效；
+       !important 强制覆盖前面写的时长。 */
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.001ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.001ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 背景装饰光斑（纯装饰，不接收鼠标事件，见上方 .blob 说明） -->
+    <div class="blob one"></div>
+    <div class="blob two"></div>
+
+    <!-- main 是语义标签，表示页面主体内容（对读屏器和搜索引擎更友好） -->
+    <main class="login-card">
+      <!-- 品牌标识：aria-hidden="true" 告诉读屏器这是纯装饰，不用朗读 -->
+      <div class="brand">
+        <div class="logo" aria-hidden="true">D</div>
+        <div class="brand-text">
+          <strong>DeepSeek Demo</strong>
+          <span>示例网站 · 用户中心</span>
         </div>
-        <p class="error-text" id="userError">请输入用户名（至少 2 个字符）。</p>
       </div>
 
-      <div class="field" id="pwField">
-        <label for="password">密码</label>
-        <div class="control">
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect x="5" y="10.5" width="14" height="9.5" rx="2.2" />
-            <path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" />
-            <circle cx="12" cy="15.2" r="1.1" fill="currentColor" stroke="none" />
-          </svg>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="请输入密码"
-            autocomplete="current-password"
-            aria-describedby="pwError"
-          />
-          <button type="button" class="toggle-pw" id="togglePw"
-                  aria-label="显示密码" aria-pressed="false" title="显示/隐藏密码">
-            <svg id="eyeOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12Z" />
-              <circle cx="12" cy="12" r="2.8" />
+      <h1>欢迎回来</h1>
+      <p class="subtitle">请使用你的账号登录，继续浏览网站内容。</p>
+
+      <!-- 表单：
+         novalidate 关闭浏览器自带的校验弹窗，改由下面的 JS 校验，样式更统一 -->
+      <form id="loginForm" novalidate>
+        <!-- 用户名输入 -->
+        <div class="field" id="userField">
+          <!-- for="username" 与输入框 id 对应，点“用户名”三个字也能聚焦输入框 -->
+          <label for="username">用户名</label>
+          <div class="control">
+            <!-- 内联 SVG 图标：用代码画图，不需要额外图片文件；stroke 控制线条颜色 -->
+            <!-- 下面这些标签就是画图的“积木”：circle 是圆（cx/cy 圆心坐标、r 半径），
+                 path 是路径（d 里 M 是起点、L 是直线、A 是弧线），坐标按 viewBox 的 24×24 画布计算 -->
+            <svg
+              class="icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="8" r="3.6" />
+              <path d="M4.5 20c.9-3.6 3.9-5.6 7.5-5.6s6.6 2 7.5 5.6" />
             </svg>
-            <svg id="eyeOff" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
-                 aria-hidden="true" style="display:none">
-              <path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12Z" />
-              <path d="M4 20 20 4" />
-            </svg>
-          </button>
+            <!-- 输入框属性说明：
+               autocomplete="username" 让浏览器记住/自动填充用户名；
+               spellcheck="false" 不检查拼写，避免用户名被标红线；
+               aria-describedby="userError" 把错误提示和输入框关联，读屏器能一起朗读 -->
+            <input
+              type="text"
+              id="username"
+              name="username"
+              placeholder="请输入用户名"
+              autocomplete="username"
+              spellcheck="false"
+              aria-describedby="userError"
+            />
+          </div>
+          <p class="error-text" id="userError">
+            请输入用户名（至少 2 个字符）。
+          </p>
         </div>
-        <p class="error-text" id="pwError">请输入密码（至少 6 个字符）。</p>
-      </div>
 
-      <div class="row">
-        <label class="remember">
-          <input type="checkbox" id="remember" checked />
-          记住用户名
-        </label>
-        <a class="link" href="#" id="forgotLink">忘记密码？</a>
-      </div>
+        <!-- 密码输入（右侧按钮切换明文/密文） -->
+        <div class="field" id="pwField">
+          <label for="password">密码</label>
+          <div class="control">
+            <svg
+              class="icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="5" y="10.5" width="14" height="9.5" rx="2.2" />
+              <path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" />
+              <circle
+                cx="12"
+                cy="15.2"
+                r="1.1"
+                fill="currentColor"
+                stroke="none"
+              />
+            </svg>
+            <!-- type="password" 让输入内容显示为圆点（密文） -->
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="请输入密码"
+              autocomplete="current-password"
+              aria-describedby="pwError"
+            />
+            <!-- type="button" 防止这个按钮触发表单提交；aria-pressed 记录当前是开还是关 -->
+            <button
+              type="button"
+              class="toggle-pw"
+              id="togglePw"
+              aria-label="显示密码"
+              aria-pressed="false"
+              title="显示/隐藏密码"
+            >
+              <!-- 睁眼图标：默认显示，表示当前是密文（点击可查看密码） -->
+              <svg
+                id="eyeOpen"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path
+                  d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12Z"
+                />
+                <circle cx="12" cy="12" r="2.8" />
+              </svg>
+              <!-- 闭眼图标：明文时显示，默认隐藏（style="display:none"） -->
+              <svg
+                id="eyeOff"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+                style="display: none"
+              >
+                <path
+                  d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12Z"
+                />
+                <path d="M4 20 20 4" />
+              </svg>
+            </button>
+          </div>
+          <p class="error-text" id="pwError">请输入密码（至少 6 个字符）。</p>
+        </div>
 
-      <button type="submit" class="submit" id="submitBtn">
-        <span class="spinner" aria-hidden="true"></span>
-        <span class="submit-label">登 录</span>
-      </button>
+        <!-- 记住用户名 / 忘记密码：label 包住复选框，点文字也能勾选 -->
+        <div class="row">
+          <label class="remember">
+            <input type="checkbox" id="remember" checked />
+            <!-- checked 表示默认勾选 -->
+            记住用户名
+          </label>
+          <a class="link" href="#" id="forgotLink">忘记密码？</a>
+        </div>
 
-      <div class="message" id="message" role="status" aria-live="polite" style="display:none"></div>
-    </form>
+        <!-- 登录按钮：type="submit" 点击后触发表单的 submit 事件
+           （真正提交前会被 JS 拦下，不刷新页面）；提交中会显示 spinner 并禁用 -->
+        <button type="submit" class="submit" id="submitBtn">
+          <span class="spinner" aria-hidden="true"></span>
+          <span class="submit-label">登 录</span>
+        </button>
 
-    <p class="demo-tip">
-      演示账号：<code>admin</code> / <code>123456</code><br />
-      这是一个纯前端示例页面，不会向任何服务器发送数据。
-    </p>
-  </main>
+        <!-- 操作结果提示区：
+           role="status" + aria-live="polite" 让读屏器在内容变化时自动念出来；
+           默认 display:none 隐藏，JS 显示时再填内容 -->
+        <div
+          class="message"
+          id="message"
+          role="status"
+          aria-live="polite"
+          style="display: none"
+        ></div>
+      </form>
 
-  <script>
-    (function () {
-      "use strict";
+      <!-- 演示账号说明：<code> 表示这是代码/账号，显示为等宽字体 -->
+      <p class="demo-tip">
+        演示账号：<code>admin</code> / <code>123456</code><br />
+        这是一个纯前端示例页面，不会向任何服务器发送数据。
+      </p>
+    </main>
 
-      var form = document.getElementById("loginForm");
-      var userInput = document.getElementById("username");
-      var pwInput = document.getElementById("password");
-      var userField = document.getElementById("userField");
-      var pwField = document.getElementById("pwField");
-      var remember = document.getElementById("remember");
-      var submitBtn = document.getElementById("submitBtn");
-      var label = submitBtn.querySelector(".submit-label");
-      var message = document.getElementById("message");
-      var togglePw = document.getElementById("togglePw");
-      var eyeOpen = document.getElementById("eyeOpen");
-      var eyeOff = document.getElementById("eyeOff");
-      var forgotLink = document.getElementById("forgotLink");
-      var STORE_KEY = "ds-demo-username";
+    <!-- 页面脚本：校验、交互、模拟登录 -->
+    <script>
+      /* 立即执行函数（IIFE）：外层 (function () { ... })() 表示
+       定义完马上执行一次，里面声明的变量不会跑到全局，避免污染其他代码。 */
+      (function () {
+        "use strict";
+        // "use strict"：严格模式，写错变量名、给未声明变量赋值等会直接报错，帮你早点发现问题
 
-      var ICON_OK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
-      var ICON_BAD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5"/><circle cx="12" cy="16.6" r=".9" fill="currentColor" stroke="none"/></svg>';
+        // 初始化：一次性取到后面要用的元素
+        // document.getElementById("id") 按 id 在页面里找到对应元素
+        var form = document.getElementById("loginForm");
+        var userInput = document.getElementById("username");
+        var pwInput = document.getElementById("password");
+        var userField = document.getElementById("userField");
+        var pwField = document.getElementById("pwField");
+        var remember = document.getElementById("remember");
+        var submitBtn = document.getElementById("submitBtn");
+        // querySelector(".类名") 在这个元素内部按类名找第一个子元素
+        var label = submitBtn.querySelector(".submit-label");
+        var message = document.getElementById("message");
+        var togglePw = document.getElementById("togglePw");
+        var eyeOpen = document.getElementById("eyeOpen");
+        var eyeOff = document.getElementById("eyeOff");
+        var forgotLink = document.getElementById("forgotLink");
+        // localStorage 里用来存用户名的键名，相当于“抽屉的标签”
+        var STORE_KEY = "ds-demo-username";
 
-      /* ---------- 记住用户名（localStorage 在 file:// 下可能不可用，做容错） ---------- */
-      function readSavedUser() {
-        try { return localStorage.getItem(STORE_KEY) || ""; } catch (e) { return ""; }
-      }
-      function saveUser(name) {
-        try {
-          if (remember.checked) { localStorage.setItem(STORE_KEY, name); }
-          else { localStorage.removeItem(STORE_KEY); }
-        } catch (e) { /* 忽略：隐私模式等 */ }
-      }
+        // 提示条用到的图标（内联 SVG 字符串，showMessage 时插进页面）
+        var ICON_OK =
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+        var ICON_BAD =
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5"/><circle cx="12" cy="16.6" r=".9" fill="currentColor" stroke="none"/></svg>';
 
-      var saved = readSavedUser();
-      if (saved) { userInput.value = saved; }
-
-      /* ---------- 显示提示 ---------- */
-      function showMessage(type, text) {
-        message.className = "message " + (type === "ok" ? "ok" : "bad");
-        message.innerHTML = (type === "ok" ? ICON_OK : ICON_BAD) + "<span></span>";
-        message.querySelector("span").textContent = text;
-        message.style.display = "flex";
-      }
-      function clearMessage() {
-        message.style.display = "none";
-        message.innerHTML = "";
-      }
-
-      /* ---------- 校验 ---------- */
-      function validateUser() {
-        var v = userInput.value.trim();
-        var ok = v.length >= 2;
-        userField.classList.toggle("invalid", !ok);
-        return ok ? v : null;
-      }
-      function validatePw() {
-        var v = pwInput.value;
-        var ok = v.length >= 6;
-        pwField.classList.toggle("invalid", !ok);
-        return ok;
-      }
-
-      userInput.addEventListener("input", function () {
-        if (userField.classList.contains("invalid")) { validateUser(); }
-        clearMessage();
-      });
-      pwInput.addEventListener("input", function () {
-        if (pwField.classList.contains("invalid")) { validatePw(); }
-        clearMessage();
-      });
-
-      /* ---------- 密码可见性切换 ---------- */
-      togglePw.addEventListener("click", function () {
-        var visible = pwInput.type === "password";
-        pwInput.type = visible ? "text" : "password";
-        eyeOpen.style.display = visible ? "none" : "block";
-        eyeOff.style.display = visible ? "block" : "none";
-        togglePw.setAttribute("aria-pressed", String(visible));
-        togglePw.setAttribute("aria-label", visible ? "隐藏密码" : "显示密码");
-        pwInput.focus({ preventScroll: true });
-      });
-
-      /* ---------- 登录（模拟，无后端） ---------- */
-      form.addEventListener("submit", function (event) {
-        event.preventDefault();
-        clearMessage();
-
-        var name = validateUser();
-        var pwOk = validatePw();
-        if (!name || !pwOk) {
-          showMessage("bad", "请先检查表单：用户名至少 2 个字符，密码至少 6 个字符。");
-          (name ? pwInput : userInput).focus();
-          return;
+        /* ---------- 记住用户名 ---------- */
+        // localStorage 是浏览器自带的本地存储，关掉页面后数据还在；
+        // getItem 读、setItem 写、removeItem 删；读不到时返回 null。
+        // 在 file:// 直接打开或隐私模式下，访问 localStorage 可能报错，
+        // 所以外面套 try/catch：出错就当作没有保存过，不影响页面使用。
+        function readSavedUser() {
+          try {
+            return localStorage.getItem(STORE_KEY) || "";
+          } catch (e) {
+            return "";
+          }
+        }
+        function saveUser(name) {
+          try {
+            // remember.checked 为 true（勾选了“记住用户名”）才保存，否则删除旧记录
+            if (remember.checked) {
+              localStorage.setItem(STORE_KEY, name);
+            } else {
+              localStorage.removeItem(STORE_KEY);
+            }
+          } catch (e) {
+            /* 忽略：隐私模式等 */
+          }
         }
 
-        submitBtn.disabled = true;
-        submitBtn.classList.add("loading");
-        label.textContent = "登录中…";
+        // 打开页面时，如果上次记住过用户名，就自动填进输入框
+        var saved = readSavedUser();
+        if (saved) {
+          userInput.value = saved;
+        }
 
-        // 用定时器模拟一次网络请求
-        window.setTimeout(function () {
-          var pw = pwInput.value;
-          var success = name.toLowerCase() === "admin" && pw === "123456";
+        /* ---------- 显示提示 ---------- */
+        // 成功/失败共用同一条提示，只切换配色（ok/bad）和图标
+        function showMessage(type, text) {
+          // className 整体替换类名，把 "message ok" 或 "message bad" 赋给元素
+          message.className = "message " + (type === "ok" ? "ok" : "bad");
+          // innerHTML 可以插入 HTML 标签；这里先放图标，再留一个 span 放文字
+          message.innerHTML =
+            (type === "ok" ? ICON_OK : ICON_BAD) + "<span></span>";
+          // textContent 只放纯文本，不解析标签，比 innerHTML 更安全
+          message.querySelector("span").textContent = text;
+          // display: flex 让图标和文字横向排列显示出来
+          message.style.display = "flex";
+        }
+        function clearMessage() {
+          message.style.display = "none";
+          message.innerHTML = "";
+        }
 
-          submitBtn.disabled = false;
-          submitBtn.classList.remove("loading");
-          label.textContent = "登 录";
+        /* ---------- 校验 ---------- */
+        // 校验用户名：去掉首尾空格后至少 2 个字符。
+        // trim() 去掉字符串两端空格；三元运算符 条件 ? 值1 : 值2，
+        // 条件成立取值1，否则取值2；不合法时返回 null。
+        function validateUser() {
+          var v = userInput.value.trim();
+          var ok = v.length >= 2;
+          // classList.toggle(类名, 布尔值)：第二个参数为 true 加类、false 删类
+          userField.classList.toggle("invalid", !ok);
+          return ok ? v : null;
+        }
+        function validatePw() {
+          var v = pwInput.value;
+          var ok = v.length >= 6;
+          pwField.classList.toggle("invalid", !ok);
+          return ok;
+        }
 
-          if (success) {
-            saveUser(name);
-            showMessage("ok", "登录成功，欢迎回来，" + name + "！");
-            pwInput.value = "";
-          } else {
-            showMessage("bad", "用户名或密码不正确，请使用演示账号 admin / 123456 再试。");
-            pwField.classList.add("invalid");
-            pwInput.select();
-            pwInput.focus();
+        // addEventListener("input", 回调)：每次输入内容变化都会触发回调。
+        // 只有已经报过错的字段才边输入边重新校验（避免刚输入就红），
+        // 同时把旧的提示消息清掉。
+        userInput.addEventListener("input", function () {
+          if (userField.classList.contains("invalid")) {
+            validateUser();
           }
-        }, 750);
-      });
+          clearMessage();
+        });
+        pwInput.addEventListener("input", function () {
+          if (pwField.classList.contains("invalid")) {
+            validatePw();
+          }
+          clearMessage();
+        });
 
-      /* ---------- 忘记密码（演示提示） ---------- */
-      forgotLink.addEventListener("click", function (event) {
-        event.preventDefault();
-        showMessage("bad", "这是演示页面，暂未提供找回密码功能。请直接使用演示账号 admin / 123456 登录。");
-      });
+        /* ---------- 密码可见性切换 ---------- */
+        // 点击眼睛按钮：密码框在 password（密文）和 text（明文）之间切换，
+        // 同时换图标，并更新 aria 状态（方便读屏器）。
+        togglePw.addEventListener("click", function () {
+          var visible = pwInput.type === "password"; // 当前是密文，说明这次要“显示”
+          pwInput.type = visible ? "text" : "password";
+          eyeOpen.style.display = visible ? "none" : "block"; // 明文时隐藏睁眼图标
+          eyeOff.style.display = visible ? "block" : "none"; // 明文时显示闭眼图标
+          // setAttribute(属性名, 值) 用于设置 HTML 属性；
+          // String(visible) 把 true/false 转成字符串 "true"/"false"
+          togglePw.setAttribute("aria-pressed", String(visible));
+          togglePw.setAttribute(
+            "aria-label",
+            visible ? "隐藏密码" : "显示密码"
+          );
+          // 把焦点放回密码框，方便用户继续输入；
+          // preventScroll: true 表示聚焦时页面不要跟着滚动
+          pwInput.focus({ preventScroll: true });
+        });
 
-      /* 初始聚焦（桌面端且未预填用户名时） */
-      if (!userInput.value && window.matchMedia("(min-width: 640px)").matches) {
-        userInput.focus();
-      }
-    })();
-  </script>
-</body>
+        /* ---------- 登录（前端模拟，无后端） ---------- */
+        // 表单触发 submit 时执行；
+        // event.preventDefault() 阻止浏览器默认的提交行为（否则页面会刷新/跳转）。
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+          clearMessage();
+
+          // 先校验两个字段，有一个不通过就提示并聚焦到出错的输入框
+          var name = validateUser();
+          var pwOk = validatePw();
+          if (!name || !pwOk) {
+            showMessage(
+              "bad",
+              "请先检查表单：用户名至少 2 个字符，密码至少 6 个字符。"
+            );
+            (name ? pwInput : userInput).focus(); // 用户名不合法聚焦用户名，否则聚焦密码
+            return; // 结束本次处理，不再往下走
+          }
+
+          // 提交中：禁用按钮（防止重复点击）、显示转圈、把文字改成“登录中…”
+          submitBtn.disabled = true;
+          submitBtn.classList.add("loading");
+          label.textContent = "登录中…";
+
+          // setTimeout(函数, 毫秒)：延迟执行，这里模拟一次网络请求的耗时
+          // 真实项目里这里应该是一段 fetch/axios 请求。
+          window.setTimeout(function () {
+            var pw = pwInput.value;
+            // 演示账号判断：用户名不区分大小写（toLowerCase 转小写），密码必须完全一致
+            var success = name.toLowerCase() === "admin" && pw === "123456";
+
+            // 请求结束：恢复按钮可点击
+            submitBtn.disabled = false;
+            submitBtn.classList.remove("loading");
+            label.textContent = "登 录";
+
+            if (success) {
+              saveUser(name);
+              showMessage("ok", "登录成功，欢迎回来，" + name + "！");
+              pwInput.value = ""; // 清空密码框，避免密码留在页面上
+            } else {
+              showMessage(
+                "bad",
+                "用户名或密码不正确，请使用演示账号 admin / 123456 再试。"
+              );
+              pwField.classList.add("invalid"); // 密码框标红
+              pwInput.select(); // 选中密码文字，方便直接重新输入
+              pwInput.focus();
+            }
+          }, 750);
+        });
+
+        /* ---------- 忘记密码（演示提示） ---------- */
+        // 演示页面不跳转，只弹一条提示
+        forgotLink.addEventListener("click", function (event) {
+          event.preventDefault();
+          showMessage(
+            "bad",
+            "这是演示页面，暂未提供找回密码功能。请直接使用演示账号 admin / 123456 登录。"
+          );
+        });
+
+        /* ---------- 初始聚焦 ---------- */
+        // 桌面端（窗口宽度 ≥ 640px）打开页面时自动聚焦用户名；
+        // 手机上不自动聚焦，避免弹出键盘挡住界面。
+        // window.matchMedia("(min-width: 640px)") 查询窗口是否满足该宽度条件，
+        // .matches 为 true 表示满足。
+        if (
+          !userInput.value &&
+          window.matchMedia("(min-width: 640px)").matches
+        ) {
+          userInput.focus();
+        }
+      })();
+    </script>
+  </body>
 </html>

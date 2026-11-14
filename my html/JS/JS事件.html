@@ -17,14 +17,24 @@
     <button onclick="click_event()">这是一个点击事件按钮</button>
     <!-- onclick代表点击事件，后面调用的是click_event函数 -->
 
+    <!-- 同一个元素可以绑多个事件：onfocus 获得焦点（点进去）、onblur 失去焦点（点别处） -->
     <input type="text" onfocus="focus_event()" onblur="blur_event()">
     <!-- 输入框获取焦点时调用focus_event函数，失去焦点时调用blur_event函数 -->
     
+    <!-- 不只是按钮，任何元素（标题、图片、div）都能绑事件 -->
     <h1 onclick="focus_h1()" >焦点演示</h1>
+    <!-- 注：函数名叫 focus_h1，实际做的是“点击弹窗”，名字和功能对不上，以后可以改成 click_h1 -->
 
     <div class="demo" onclick="click_event()">这是一个盒子</div>
+    <!-- 盒子也能点击：事件跟着元素走，和元素类型无关 -->
 
     <script>
+        // ===== 事件 = 用户在页面上的动作（点击、聚焦、失焦……），一发生就自动调用对应函数 =====
+        // 绑定方式有三种：① HTML 属性 onclick="函数()"（本文件用的就是这种）
+        //               ② JS 里 element.onclick = 函数名
+        //               ③ element.addEventListener("click", 函数名)（最推荐）
+        // alert(文字) 会弹窗挡住页面，适合演示；console.log 只往控制台输出，不打扰用户
+
         // 点击事件
         function click_event(){
             alert("点击事件触发");//浏览器弹窗 
@@ -40,6 +50,7 @@
         function blur_event(){
             console.log("失去焦点");
         }
+        // 小结：事件名去掉开头的 on，就是 addEventListener 里要写的名字（onclick → "click"）
     </script>
 </body>
 </html>

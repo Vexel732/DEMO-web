@@ -4,50 +4,65 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>文本标签练习</title>
+    <!-- link 是“外部”引入方式：把 CSS/style.css 拉进来，href 是相对本文件的路径；
+         rel="stylesheet" 表示这是一份样式表 -->
     <link rel="stylesheet" href="CSS/style.css" />
     <!--todo 导入外部CSS-->
+    <!-- style 标签里写的是“内部”样式，只对当前这个页面生效 -->
     <style>
       .incolor {
         /*//! 暗底上由 blueviolet 提亮为浅紫，保证可读*/
-        color: #c084fc;
+        color: #c084fc; /* .incolor = 类选择器，class="incolor" 的元素都变这个紫色 */
       }
     </style>
   </head>
 
   <body>
+    <!-- .card 是 style.css 里定义的玻璃卡片：里面的内容会被包在一个居中的框里 -->
     <div class="card">
+      <!-- h1~h6 是标题标签，数字越小越重要、字号越大；一个页面通常只用一个 h1 -->
       <h1>1级标题标签</h1>
       <h2>2级标题标签</h2>
       <h3>3级标题标签</h3>
       <h4>4级标题标签</h4>
       <h5>5级标题标签</h5>
+      <!-- p 是段落：独占一行，上下自带间距 -->
       <p>段落标签</p>
+      <!-- b 加粗 / i 斜体 / u 下划线 / s 删除线：只改“长相”，不表达语气；
+           想表达“重点、强调”用 strong、em，语义更明确 -->
       <p>文本样式<b>加粗</b><i>斜体</i><u>下划线</u><s>删除线</s></p>
+      <!-- ul 无序列表（前面是圆点/方块），ol 有序列表（前面是 1. 2. 3.），每项都包在 li 里 -->
       <ul>
         <li>无序1</li>
         <li>无序2</li>
         <li>无序3</li>
         <li>无序4</li>
       </ul>
+      <!-- 有序列表：序号由浏览器自动生成，调整顺序时会自动重排 -->
       <ol>
         <li>有序1</li>
         <li>有序2</li>
         <li>有序3</li>
         <li>有序4</li>
       </ol>
+      <!-- 表格结构：table 表 → tr 一行 → th 表头单元格（默认加粗居中）→ td 普通单元格。
+           border="2" 是老式 HTML 属性写法，现在更推荐用 CSS 的 border 来控制 -->
       <table border="2">
+        <!-- 第 1 行放表头 -->
         <tr>
           <th>列标题1</th>
           <th>列标题2</th>
           <th>列标题3</th>
           <th>列标题4</th>
         </tr>
+        <!-- 第 2 行放数据，4 个格子平均占 4 列 -->
         <tr>
           <td>1</td>
           <td>2</td>
           <td>3</td>
           <td>4</td>
         </tr>
+        <!-- 第 3 行只写了 2 个格子，后面两列就是空的（单元格不会自动补齐） -->
         <tr>
           <td>12</td>
           <td>22</td>
@@ -55,21 +70,28 @@
       </table>
 
       <!--一下内容为CSS-->
+      <!-- 回顾：CSS 有三种选择器 —— 标签名（p）、.类名（class）、#id（id）；
+           class 可以被多个元素共用，id 在同一个页面里只能出现一次 -->
       <p>CSS内部定义</p>
       <!--所有P文本都会变为外部CSS定义的样式-->
 
+      <!-- 用 class 选中：style.css 里的 .outcolor 一次管住下面两个标题 -->
       <h1 class="outcolor">这是一个外部CSS类型为outcolor的1级标签</h1>
       <h2 class="outcolor">这是一个外部CSS类型为outcolor的2级标签</h2>
       <!--外部CSS类型为outcolor-->
 
+      <!-- 用 class 选中：这里生效的是本页 style 标签里定义的 .incolor（内部样式） -->
       <h1 class="incolor">这是一个内部CSS类型为incolor的1级标签</h1>
       <h2 class="incolor">这是一个内部CSS类型为incolor的2级标签</h2>
       <!--内部CSS类型为incolor-->
 
+      <!-- 用 id 选中：写法同理，但 #id 的权重比 .class 高，而且 id 不能重复
+           （这两行是为了演示，真实项目里别给两个元素写同一个 id） -->
       <h2 id="outID">这是一个外部CSS，id为outID的2级标签</h2>
       <h1 id="outID">这是一个外部CSS，id为outID的1级标签</h1>
       <!--外部CSS,id为outID-->
 
+      <!-- 同样是表格：这里用 class 选中，style.css 的 .outtable 只改了字号 -->
       <table border="3" class="outtable">
         <tr>
           <td>类型</td>
@@ -84,6 +106,7 @@
       </table>
       <!--这是一个外部CSS，类型为outtable的表格-->
 
+      <!-- 同一张表格换成 id 选中：#outtable 设了颜色和更大字号，可见 id 的样式也生效 -->
       <table border="3" id="outtable">
         <tr>
           <td>类型</td>
@@ -98,20 +121,26 @@
       </table>
       <!--这是一个外部CSS，id为outtable的表格-->
 
+      <!-- 图片只写 width 不写 height：浏览器会按原图比例自动算高度，不会被拉变形 -->
       <img src="111.jpg" alt="" width="100" />
       <img
         src="https://img0.baidu.com/it/u=30302816,1581930082&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=667"
         alt=""
         width="200"
       />
+      <!-- 上面是网络图片：src 直接给完整网址，宽度写 200，高度自动按比例缩放 -->
+      <!-- :hover 伪类：鼠标移上去时才生效的样式（具体见 style.css 的 #outelement:hover） -->
       <p id="outelement">这是一个伪类选择器控制文本</p>
 
       <!--新增：暗色主题表格演示-->
       <h2 class="outcolor">暗色主题表格演示</h2>
       <table class="darktable">
+        <!-- caption 要写在 table 内部第一行，文字显示在表格上方，相当于表格标题 -->
         <caption>
           标签练习进度表
         </caption>
+        <!-- thead 表头区 / tbody 表体区 / tfoot 表尾区：分区之后样式能分开写，
+             以后用 JS 处理数据也更方便 -->
         <thead>
           <tr>
             <th>序号</th>
@@ -121,6 +150,8 @@
           </tr>
         </thead>
         <tbody>
+          <!-- 注意下面用到的 &lt; 和 &gt; 是“转义字符”，分别代表 < 和 >：
+               如果直接写 <h1>，浏览器会当成真的标签解析，页面上就看不到这几个字了 -->
           <tr>
             <td>1</td>
             <td>&lt;h1&gt; ~ &lt;h6&gt;</td>
@@ -146,8 +177,10 @@
             <td>练习中</td>
           </tr>
         </tbody>
+        <!-- tfoot 表尾：一般放合计、备注这类收尾信息 -->
         <tfoot>
           <tr>
+            <!-- colspan="3" = 这一个格子横向占 3 列（纵向合并用 rowspan） -->
             <td colspan="3">合计</td>
             <td>4 项</td>
           </tr>

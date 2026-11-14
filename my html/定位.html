@@ -5,14 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <style>
+      /* ===== position 定位：把元素从原本的位置“挪走”，或者固定在某个地方 =====
+         常用三种：relative 相对定位、absolute 绝对定位、fixed 固定定位
+         （另外还有默认的 static 不定位、滚到边上就粘住的 sticky） */
+      /* .box1：相对定位这一组的“父容器”，只给背景色和高度，方便观察子盒子的位移 */
       .box1 {
         /* width: 100px; */
         height: 300px;
         background-color: aqua;
       }
       .normal {
-        height: 100px;
-        width: 100px;
+        height: 100px; /* 高 100 像素 */
+        width: 100px; /* 宽 100 像素，和高相等就是正方形 */
         background-color: antiquewhite;
       }
       /* normal正常盒子样式 */
@@ -22,12 +26,17 @@
         background-color: palevioletred;
         position: relative; /*相对定位，relative相对*/
         left: 100px; /*距离左边100px-相对于原本位置*/
+        /* 关键：看起来往右挪了 100px，但它在文档流里原来的位置仍然占着，
+           所以不会把下面的盒子挤上来 */
       }
       /*以上为相对定位样式--以下为绝对定位样式*/
       /*以最近的已定为元素为基础，脱离正常文档形式*/
       .box2 {
         height: 300px;
         background-color: blue;
+        /* 这个父盒子没写 position，就不算“已定位”元素 →
+           里面的 absolute 子元素会跳过它，一路往上找到页面（窗口）左上角当参照。
+           想让它当参照物，可以给这里加 position: relative（本次只说明，不改代码） */
       }
       .absolute {
         width: 100px;
@@ -35,6 +44,7 @@
         background-color: black;
         position: absolute; /*绝对定位脱离正常文档流*/
         left: 120px; /*绝对定位后下方盒子上浮，加一个与左边距离看效果*/
+        /* 脱流后不再占位置，所以后面的盒子会往上顶；宽高不写时由内容决定 */
       }
       /*以上为绝对定位样式--以下为固定定位样式*/
       /*以浏览器相对位置定位，脱离正常文档形式*/
@@ -42,15 +52,17 @@
         width: 100px;
         height: 100px;
         background-color: brown;
-        position: fixed;
-        right: 0;
-        top: 300px;
+        position: fixed; /* 固定定位：相对浏览器窗口定位，页面滚动它也不动 */
+        right: 0; /* 贴住窗口右边 */
+        top: 300px; /* 距窗口顶部 300px */
       }
     </style>
   </head>
 
   <body>
     <h1>相对定位</h1>
+    <!-- 父容器里放 普通 → 相对 → 普通 三个盒子：中间那个右移 100px，
+         上下的盒子位置完全不受影响，这就是“相对定位不脱流” -->
     <div class="box1">
       <div class="normal"></div>
       <div class="relative"></div>
@@ -58,12 +70,14 @@
     </div>
     <!--normal正常   relative相对-->
     <h1>绝对定位</h1>
+    <!-- 中间的黑盒子绝对定位后不占位置，第三个普通盒子会往上顶，填掉空出来的坑 -->
     <div class="box2">
       <div class="normal"></div>
       <div class="absolute"></div>
       <div class="normal"></div>
     </div>
     <h1>固定定位</h1>
+    <!-- 固定在窗口右侧、距顶部 300px，滚动页面时它一直待在原地不动 -->
     <div class="box3">固定定位</div>
   </body>
 </html>

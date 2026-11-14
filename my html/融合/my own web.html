@@ -4,16 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My own web!</title>
+    <!-- 小练习：把 HTML + CSS + JS 串起来 —— 点方块 → 读输入框里的数字 → 循环打印到控制台 -->
     <!-- 以下为CSS -->
     <style>
+      /* 这个盒子只是个“点击靶子”：浅青色背景 + 固定宽高，点了会调用 JS 里的 click_box1() */
       .box1 {
         background-color: aqua;
-        height: 100px;
-        width: 200px;
+        height: 100px; /* 高 100 像素 */
+        width: 200px; /* 宽 200 像素 */
       }
     </style>
     <!-- 以下为JS -->
     <script>
+      // 下面这一行是一串反引号：语法上能通过（会被当成空的模板字符串），但没有任何作用，
+      // 大概是手滑输入的，以后可以删掉（本次只加注释、不改代码）
       ````````````````````````;
       // ===================== 可调参数 =====================
       // 循环最多打印到多少：防止手滑输入 1000000000 时 console.log 被执行上亿次、控制台刷爆而卡死浏览器。

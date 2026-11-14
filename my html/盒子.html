@@ -5,26 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>盒子</title>
     <style>
+      /* ===== 盒模型：由内到外是 内容 → 内边距 padding → 边框 border → 外边距 margin =====
+         width/height 默认只算“内容区”，再加上 padding 和 border 才是盒子实际占的地方；
+         想让宽高直接包含 padding 和 border，可以加 box-sizing: border-box。 */
       .demo00 {
         background-color: aqua;
-        display: inline-block;
-        border: 5px solid yellow;
+        display: inline-block; /* 块元素变“行内块”：能和别人并排，又能设置宽高 */
+        border: 5px solid yellow; /* 三个值：粗细 样式 颜色，solid 表示实线 */
       }
       .demo11 {
         background-color: green;
-        width: 300px;
-        height: 200px;
+        width: 300px; /* 内容区宽度 */
+        height: 200px; /* 内容区高度 */
+        /* 下面这条是“三段式”长写法：样式、宽度、颜色各写一行，效果与后面的 border 简写完全一样。
+           多个值时按 上 右 下 左 顺时针赋值，少于四个会自动对称复制 */
         /* border-style: solid dashed dotted;
         border-width: 20px 0 20px 40px;
         border-color: aqua; */
         border: 10px wheat solid;
-        border-left: 10px orange solid;
-        padding: 50px;
+        border-left: 10px orange solid; /* 只改左边框，会覆盖上面那条统一的边框 */
+        padding: 50px; /* 四边一起设内边距，会把盒子撑大（左右各 50，上下各 50） */
       }
     </style>
   </head>
   <body>
+    <!-- 行内块：宽度由文字撑开，和下面的块级盒子不一样 -->
     <div class="demo00">hello word</div>
+    <!-- 块级元素：默认独占一行，宽高由上面 CSS 固定，padding 让它看起来更大 -->
     <div class="demo11">测试</div>
   </body>
 </html>
